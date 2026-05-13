@@ -1,16 +1,21 @@
 # Autonomous Safe Drone Following · CS 106A
 
-Static one-page site for our EE/CS 106A Spring 2026 final project.
+Production full-stack site for our EE/CS 106A Spring 2026 final project. The
+original static HTML/CSS/JavaScript experience is preserved in `public/`, with a
+Node server, metadata APIs, build validation, and smoke tests around it.
 
 **Live:** https://cs106a-drone-convoy.vercel.app
 
 ## What this repo contains
 
-- `index.html` — the entire site (all CSS + JS inline)
+- `public/` — the production frontend split into HTML, CSS, and JavaScript
+- `src/server/` — dependency-free Node HTTP server for static assets and APIs
+- `src/content/` — structured project metadata used by the API
+- `scripts/build.js` — validates and copies frontend/video assets into `dist/`
+- `test/` — Node test runner smoke tests for the server and API
 - `videos/` — the 5 demo clips referenced in the page (~15 MB)
 - `tello-station.sh` — switches a Tello between AP and station mode (real hardware)
 - `tt_show_aruco.py` — renders an ArUco marker onto a RoboMaster TT's 8×8 LED matrix
-- `assets/` — static images
 
 The actual ROS 2 / Gazebo project source lives in its own repo:
 [Tyler6666666/106a_final_project](https://github.com/Tyler6666666/106a_final_project).
@@ -18,19 +23,27 @@ The actual ROS 2 / Gazebo project source lives in its own repo:
 ## Run locally
 
 ```bash
-open index.html       # macOS — opens in default browser
-# or
-python3 -m http.server 8080
+npm run dev
 ```
 
-## Deploy
+The app defaults to <http://127.0.0.1:3000>. Override with `PORT=8080 npm run dev`.
 
-Hosted on Vercel as a static site. Any commit to `main` redeploys automatically
-once the project is linked. Manual deploy:
+## Build, test, and run
 
 ```bash
-vercel --prod
+npm run build
+npm test
+npm start
 ```
+
+`npm start` serves `dist/public` in production after a build, while development
+serves `public/` directly.
+
+## API
+
+- `GET /api/health` — service status and build metadata
+- `GET /api/project` — structured project, team, architecture, and demo data
+- `GET /api/demos` — demo video manifest
 
 ## Site structure
 

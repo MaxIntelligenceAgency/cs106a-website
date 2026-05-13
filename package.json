@@ -1,0 +1,17 @@
+{
+  "name": "cs106a-drone-convoy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Production-grade full-stack site for the CS 106A autonomous safe drone convoy following project.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development node src/server/index.js",
+    "start": "NODE_ENV=production node src/server/index.js",
+    "build": "node scripts/build.js",
+    "test": "node --test",
+    "check": "npm run build && npm test"
+  }
+}

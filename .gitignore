@@ -4,6 +4,10 @@
 # Vercel
 .vercel/
 
+# Node / build output
+node_modules/
+dist/
+
 # Editor noise
 .vscode/
 .idea/
@@ -17,3 +21,5 @@
 # Logs
 *.log
 ogre.log
+.vercel
+.env*.local
