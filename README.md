@@ -1,4 +1,4 @@
-# Autonomous Safe Drone Convoy Following · CS 106A
+# Autonomous Safe Drone Following · CS 106A
 
 Static project site for our EE/CS 106A Spring 2026 final project. The current backbone remains `index.html`, and the repo now also includes a Next.js/TypeScript implementation map for iterative website engineering.
 
@@ -37,7 +37,6 @@ flowchart TD
 - `public/videos/` — generated locally/Vercel from `videos/*.mp4` by `npm run sync:videos`; ignored by Git so PR creation does not need to upload duplicate binary files
 - `tello-station.sh` — switches a Tello between AP and station mode (real hardware)
 - `tt_show_aruco.py` — renders an ArUco marker onto a RoboMaster TT's 8×8 LED matrix
-- `assets/` — static images
 
 The actual ROS 2 / Gazebo project source lives in its own repo:
 [Tyler6666666/106a_final_project](https://github.com/Tyler6666666/106a_final_project).
@@ -253,9 +252,7 @@ The script writes `.codex/pr-feedback/pr-4/next_steps.md`, `thread.md`, `review-
 Current static backbone:
 
 ```bash
-open index.html       # macOS — opens in default browser
-# or
-python3 -m http.server 8080
+npm run dev
 ```
 
 Next.js / TypeScript implementation map:
@@ -269,12 +266,22 @@ npm run dev
 
 ## Deploy
 
-Hosted on Vercel as a static site. Any commit to `main` redeploys automatically
-once the project is linked. Manual deploy:
+## Build, test, and run
 
 ```bash
-vercel --prod
+npm run build
+npm test
+npm start
 ```
+
+`npm start` serves `dist/public` in production after a build, while development
+serves `public/` directly.
+
+## API
+
+- `GET /api/health` — service status and build metadata
+- `GET /api/project` — structured project, team, architecture, and demo data
+- `GET /api/demos` — demo video manifest
 
 ## Site structure
 
