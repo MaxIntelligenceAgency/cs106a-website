@@ -483,7 +483,7 @@
 
   .pipeline-flow {
     display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
     align-items: center;
     gap: 4px;
   }
@@ -692,6 +692,94 @@
     font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
   }
   td code { font-size: 12px; }
+
+
+
+  /* ───────────── Linear system diagram ───────────── */
+  .linear-arch {
+    margin-top: 30px;
+    background: var(--canvas-parchment);
+    border: 1px solid rgba(38, 37, 16, 0.10);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+  }
+  .linear-arch-toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 18px;
+    background: var(--pebble-gray);
+    border-bottom: 1px solid rgba(38, 37, 16, 0.08);
+  }
+  .linear-arch-title {
+    font-family: var(--font-mono); font-size: 12px; color: var(--deep-shadow);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .linear-arch-hint { font-size: 13px; color: var(--muted-stone); }
+  .linear-arch-flow {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(132px, 1fr));
+    gap: 10px;
+    padding: 18px;
+    overflow-x: auto;
+  }
+  .linear-node {
+    min-height: 128px;
+    border: 1px solid rgba(38, 37, 16, 0.12);
+    border-radius: var(--r-md);
+    background: rgba(247, 247, 244, 0.84);
+    color: var(--deep-shadow);
+    text-align: left;
+    padding: 14px;
+    cursor: pointer;
+    position: relative;
+    transition: transform .16s, border-color .16s, box-shadow .16s, background .16s;
+  }
+  .linear-node:not(:last-child)::after {
+    content: "→";
+    position: absolute; right: -15px; top: 50%; transform: translateY(-50%);
+    color: var(--muted-stone); font-family: var(--font-mono); font-size: 16px;
+    pointer-events: none; z-index: 2;
+  }
+  .linear-node:hover, .linear-node.active {
+    transform: translateY(-2px);
+    border-color: var(--onyx-outline);
+    box-shadow: var(--shadow-subtle);
+    background: #fffefa;
+  }
+  .linear-node .step {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--inkwell); color: var(--canvas-parchment);
+    font-family: var(--font-mono); font-size: 11px; margin-bottom: 12px;
+  }
+  .linear-node .node-title { display: block; font-weight: 650; letter-spacing: -0.02em; margin-bottom: 5px; }
+  .linear-node .node-subtitle { display: block; color: var(--muted-stone); font-size: 12.5px; line-height: 1.35; }
+  .linear-detail {
+    display: grid; grid-template-columns: 0.78fr 1.22fr; gap: 24px;
+    padding: 20px 22px 22px;
+    border-top: 1px solid rgba(38, 37, 16, 0.08);
+  }
+  .linear-detail .kicker {
+    font-family: var(--font-mono); font-size: 11px; color: var(--muted-stone);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .linear-detail h3 { margin: 0 0 8px; }
+  .linear-detail p { color: var(--muted-stone); }
+  .linear-detail ul { margin: 0; padding-left: 18px; color: var(--inkwell); }
+  .linear-detail li { margin-bottom: 6px; }
+  .system-caption {
+    margin-top: 18px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--onyx-outline);
+    background: rgba(245, 78, 0, 0.06);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+  .system-caption p { margin: 0; max-width: 960px; }
+  @media (max-width: 980px) {
+    .linear-arch-flow { grid-template-columns: 1fr; overflow-x: visible; }
+    .linear-node:not(:last-child)::after { content: "↓"; right: 18px; top: auto; bottom: -18px; transform: none; }
+    .linear-detail { grid-template-columns: 1fr; }
+  }
 
   /* ───────────── State machine ───────────── */
   .state-row {
@@ -1135,6 +1223,39 @@
     transition: opacity .3s ease;
   }
   .hero-sim-hint.fade { opacity: 0; }
+  .hero-video video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    background: var(--code-bg);
+  }
+  .hero-video-caption {
+    display: flex; flex-wrap: wrap; gap: 10px 16px;
+    padding: 12px 14px;
+    border-top: 1px solid rgba(38, 37, 16, 0.08);
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--muted-stone);
+    background: rgba(230,229,224,0.42);
+  }
+  .hero-video-caption strong { color: var(--deep-shadow); font-weight: 600; }
+
+  .appendix-details {
+    margin-top: 16px;
+    border: 1px solid rgba(38, 37, 16, 0.10);
+    border-radius: var(--r-lg);
+    background: rgba(230,229,224,0.36);
+    overflow: hidden;
+  }
+  .appendix-details summary {
+    cursor: pointer;
+    padding: 14px 18px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--deep-shadow);
+    border-bottom: 1px solid rgba(38, 37, 16, 0.08);
+  }
+  .appendix-details:not([open]) summary { border-bottom: 0; }
+  .appendix-details .cursor-desktop { margin: 0; border-radius: 0; box-shadow: none; border: 0; }
 
   /* ───────────── Online sim · interactive canvas ───────────── */
   .online-sim {
@@ -1291,15 +1412,14 @@
       106A · Drone Convoy
     </div>
     <ul>
-      <li><a href="#team">Team</a></li>
-      <li><a href="#motivation">Motivation</a></li>
-      <li><a href="#architecture">Architecture</a></li>
-      <li><a href="#core">Core code</a></li>
-      <li><a href="#operation">Operation</a></li>
-      <li><a href="#online">Try it</a></li>
-      <li><a href="#demos">Demos</a></li>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#system">System</a></li>
+      <li><a href="#safety">Control</a></li>
       <li><a href="#failures">Failures</a></li>
       <li><a href="#future">Future</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#resources">Resources</a></li>
     </ul>
     <a class="nav-cta" href="https://github.com/Tyler6666666/106a_final_project.git" target="_blank" rel="noopener">
       GitHub →
@@ -1316,11 +1436,9 @@
         <span class="hero-pill"><span class="live-dot"></span> EECS / BioE / ME C106A · Spring 2026 · Final Project</span>
         <h1 class="title">Autonomous Safe<br/>Drone Convoy<br/>Following.</h1>
         <p class="hero-sub">
-          A leader–follower drone system. A teleoperated leader carries a target;
-          a Tello follower autonomously locks on with vision and PD control,
-          stays at a strict safe distance, and lands cleanly when the visual
-          lock is lost. Two interchangeable perception backbones, one shared
-          ROS&nbsp;2 controller.
+          A ROS2-based visual servoing system that lets a real DJI/Ryze Tello drone
+          follow a target using ArUco tracking, YOLOv8 face tracking, and
+          safety-aware control.
         </p>
         <div style="margin-bottom: 22px;">
           <span class="pill aruco">ArUco · 6-DoF</span>
@@ -1328,24 +1446,29 @@
           <span class="pill">ROS 2 Humble</span>
         </div>
         <div class="cta-row">
-          <a class="btn primary" href="#demos">Watch the demos <span class="arrow">→</span></a>
-          <a class="btn outline" href="#architecture">System architecture</a>
+          <a class="btn primary" href="#results">Watch the demos <span class="arrow">→</span></a>
+          <a class="btn outline" href="#system">System architecture</a>
           <a class="btn ghost" href="https://github.com/Tyler6666666/106a_final_project.git" target="_blank" rel="noopener">GitHub repo</a>
         </div>
       </div>
 
-      <!-- right: live drone sim · same logic as #online, no toolbar -->
-      <div class="hero-sim">
+      <!-- right: real drone evidence loop -->
+      <div class="hero-sim hero-video" aria-label="Muted real Tello face-following demo video">
         <div class="os-titlebar">
           <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-          <span class="os-title">drone_sim · live</span>
+          <span class="os-title">cp_face_a.mp4 · real Tello demo</span>
           <div class="hero-sim-pill">
-            <span class="live-dot"></span>FOLLOW · /cmd_vel
+            <span class="live-dot"></span>REAL FLIGHT · FACE LOCK
           </div>
         </div>
-        <div class="os-stage hero-sim-stage" id="hero-sim-stage">
-          <canvas class="os-canvas" id="hero-sim-canvas"></canvas>
-          <div class="hero-sim-hint" id="hero-sim-hint">↓ drag the tag · or just watch</div>
+        <video src="videos/cp_face_a.mp4"
+               autoplay muted loop playsinline preload="metadata"
+               poster="106a_final_project/demo/posters/cp_face_a_3x.jpg">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="hero-video-caption">
+          <span><strong>Proof:</strong> real DJI/Ryze Tello hardware</span>
+          <span><strong>Behavior:</strong> stable lock → takeoff → center → follow</span>
         </div>
       </div>
     </div>
@@ -1353,20 +1476,20 @@
     <!-- stats -->
     <div class="stats">
       <div class="stat">
-        <div class="num">3</div>
-        <div class="lbl">Live demos</div>
+        <div class="num">Real</div>
+        <div class="lbl">DJI/Ryze Tello hardware</div>
       </div>
       <div class="stat">
         <div class="num">2</div>
-        <div class="lbl">Perception modes</div>
+        <div class="lbl">ArUco + YOLOv8 Face Tracking</div>
       </div>
       <div class="stat">
-        <div class="num">$100</div>
-        <div class="lbl">Drone · self-funded</div>
+        <div class="num">Control</div>
+        <div class="lbl">Visual servoing + safety state machine</div>
       </div>
       <div class="stat">
-        <div class="num">30 s</div>
-        <div class="lbl">Stable-tracking bar</div>
+        <div class="num">Stack</div>
+        <div class="lbl">ROS2 · OpenCV · YOLOv8 · djitellopy · Python</div>
       </div>
     </div>
   </div>
@@ -1374,59 +1497,23 @@
 
 <hr class="section-divider" />
 
-<!-- ════════════ TEAM ════════════ -->
-<section id="team">
+<!-- ════════════ INTRODUCTION ════════════ -->
+<section id="overview">
   <div class="container">
-    <span class="eyebrow">01 · Team</span>
-    <h2>Four students. Four backgrounds.</h2>
-    <p class="lede">From CS, EECS, and Mechanical Engineering — covering ML/RL, computer vision, manipulation, and UAV systems.</p>
-
-    <div class="grid-4" style="margin-top: 28px;">
-      <div class="team-card">
-        <div class="avatar">MW</div>
-        <span class="role">CS · Cogsci</span>
-        <div class="name">Max Wang</div>
-        <div class="bio">Studies ML and RL methods. Interest in autonomous driving and humanoids.</div>
-      </div>
-      <div class="team-card">
-        <div class="avatar">TZ</div>
-        <span class="role">EECS</span>
-        <div class="name">Tianren (Tyler) Zeng</div>
-        <div class="bio">Computer vision, GPS-free obstacle avoidance, RL for humanoid control.</div>
-      </div>
-      <div class="team-card">
-        <div class="avatar">GJ</div>
-        <span class="role">ME</span>
-        <div class="name">Gia Jeong</div>
-        <div class="bio">Tactile sensing and suction-cup manipulation. Previously: human-following quadruped, autonomous car.</div>
-      </div>
-      <div class="team-card">
-        <div class="avatar">YP</div>
-        <span class="role">EECS</span>
-        <div class="name">Yuanbo (Aaron) Pang</div>
-        <div class="bio">VLA models on whole-body robots. UAV systems work.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════ MOTIVATION ════════════ -->
-<section id="motivation">
-  <div class="container">
-    <span class="eyebrow">02 · Motivation</span>
-    <h2>Convoying is mature in cars. Under-exploited for drones.</h2>
+    <span class="eyebrow">02 · Introduction</span>
+    <h2>What did we build?</h2>
     <div class="grid-2" style="margin-top: 24px;">
       <div>
         <p class="lede">
-          In domains where full autonomy is infeasible — inspection, search-and-rescue,
-          warehouse logistics — <strong>convoying</strong> lets one operator command many
-          robots with high precision and lower risk than running each independently.
-          The pattern is well-understood for ground vehicles. It is barely touched for UAVs.
+          We built a real leader-follower drone system on low-cost hardware. A
+          DJI/Ryze Tello follower uses vision to lock onto a target, estimate
+          target error, publish velocity commands, and recover safely when video
+          or Wi-Fi communication becomes unreliable.
         </p>
         <p>
-          We prototype that idea on <strong>compute-constrained UAV hardware</strong>:
-          a $100 self-funded Tello drone with a 720p / 30 fps camera, a base-station
-          laptop running ROS 2 Humble, and a Wi-Fi link doing all the heavy lifting.
+          The project asks whether a low-cost consumer drone can perform safe
+          autonomous following using only onboard video, ROS2 communication, and
+          software safety logic.
         </p>
       </div>
       <div class="card">
@@ -1442,141 +1529,390 @@
       </div>
     </div>
 
-    <h3 style="margin-top: 48px;">Aim · autonomous following with safe failure modes.</h3>
+    <h3 style="margin-top: 48px;">System overview · one shared control contract.</h3>
     <div class="grid-3" style="margin-top: 16px;">
       <div class="card">
         <div class="icon">◎</div>
         <h3>Goal</h3>
-        <p>Stable moderate-speed following using ArUco markers, with safe-landing protocols if the visual lock is lost.</p>
+        <p>Use a real Tello follower to track either a printed marker or a human face while staying within a safe indoor range.</p>
       </div>
       <div class="card">
         <div class="icon">✓</div>
         <h3>Success bar</h3>
-        <p><strong>30 s of continuous autonomous tracking</strong> — maintaining a safe distance the entire time.</p>
+        <p><strong>Working autonomous following</strong> — demonstrate stable real-hardware flight, centered tracking, and safe response to target loss.</p>
       </div>
       <div class="card">
         <div class="icon">↗</div>
         <h3>Stretch</h3>
-        <p>Anticipate target acceleration · reacquire after temporary occlusion · extend perception swap to face / person tracking.</p>
+        <p>Different perception sources feed the same target-pose interface, ROS2 control contract, and safety-aware Tello bridge.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ ARCHITECTURE ════════════ -->
-<section id="architecture">
+<!-- ════════════ MOTIVATION ════════════ -->
+<section id="motivation">
   <div class="container">
-    <span class="eyebrow">03 · System Architecture</span>
-    <h2>Two perception pipelines. One shared ROS bus.</h2>
+    <span class="eyebrow">03 · Motivation</span>
+    <h2>Why this is an interesting robotics systems problem.</h2>
+    <div class="grid-3" style="margin-top: 24px;">
+      <div class="card"><div class="icon">?</div><h3>Noisy monocular video</h3><p>The Tello has one onboard camera, so the system must estimate target error from imperfect image measurements rather than dedicated range sensors.</p></div>
+      <div class="card"><div class="icon">≈</div><h3>Wi-Fi control loop</h3><p>Frames and commands move over Wi-Fi, so the controller must handle stale data, delay, and dropped detections without chasing bad measurements.</p></div>
+      <div class="card"><div class="icon">↓</div><h3>Safe autonomy</h3><p>The drone waits for stable visual lock before takeoff, clips commands during follow, and lands when the target is lost for too long.</p></div>
+    </div>
+    <p class="lede" style="margin-top: 28px;">Real-world versions of this pattern matter for indoor convoy robotics, inspection, filming, warehouse assistance, and search-support drones.</p>
+  </div>
+</section>
+
+<!-- ════════════ RESULTS FIRST ════════════ -->
+<section id="results">
+  <div class="container">
+    <span class="eyebrow">04 · Results / Demo Videos</span>
+    <h2>It worked in simulation and on the real Tello.</h2>
     <p class="lede">
-      Used <strong>ROS 2 Humble</strong> for communication between the base station and
-      the drone. Both modes publish the same <code>Twist</code> command. Only the
-      perception source changes; safety actions stay unified through <code>/tello_action</code>.
+      We show proof before implementation details: the same perception → estimation
+      → control loop was tested in Gazebo, then on real hardware with ArUco and
+      YOLOv8 face tracking.
     </p>
 
-    <div class="pipeline" id="pipeline" data-mode="aruco">
-      <div class="pipeline-toolbar">
-        <span class="pipeline-eyebrow">PERCEPTION MODE</span>
-        <button class="pipeline-mode active" data-mode="aruco">
-          <span class="md-dot orange"></span>ArUco
-        </button>
-        <button class="pipeline-mode" data-mode="face">
-          <span class="md-dot green"></span>Face
-        </button>
-        <span class="pipeline-live"><span class="lv-dot"></span>live data flow</span>
+    <div class="grid-4" style="margin-top: 24px; margin-bottom: 36px;">
+      <div class="card"><div class="icon">✓</div><h3>Follow duration</h3><p>~30 s stable following target for the final demo bar.</p></div>
+      <div class="card"><div class="icon">↔</div><h3>Safe distance</h3><p>Controller targets roughly 1.5 m from the leader or face.</p></div>
+      <div class="card"><div class="icon">↓</div><h3>Target loss</h3><p>Short loss triggers search; prolonged loss triggers auto-land.</p></div>
+      <div class="card"><div class="icon">◎</div><h3>Perception</h3><p>Marker-based ArUco pose and marker-free YOLOv8 face tracking.</p></div>
+    </div>
+
+    <!-- Demo 1 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 01 · Gazebo Simulation</span>
+      <h3>Gazebo simulation.</h3>
+      <p>Before any real flight we validated the entire pipeline inside ROS 2 + Gazebo
+         Classic 11. Same nodes, same topics, simulated pixels.</p>
+      <div class="video-card">
+        <div class="video-header">
+          <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <span class="filename">ros-sim.mp4</span>
+        </div>
+        <video src="videos/ros-sim.mp4"
+               controls muted loop playsinline preload="metadata">
+          Your browser does not support HTML5 video.
+        </video>
       </div>
+      <div class="video-meta">
+        <span><strong>Source:</strong> Gazebo Classic 11 · simulated Tello camera</span>
+        <span><strong>Tracking topic:</strong> <code>/aruco/pose_3d</code> → <code>/drone1/cmd_vel</code></span>
+        <span><strong>Trajectory:</strong> spatial figure-eight (Lissajous 1:2)</span>
+      </div>
+    </div>
 
-      <div class="pipeline-flow">
-        <div class="pipeline-stage" data-stage="camera">
-          <div class="pipeline-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>
+    <!-- Demo 2 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 02 · ArUco Following</span>
+      <h3>Real Tello tracking an ArUco tag.</h3>
+      <p>Same code path in the real world. Wi-Fi latency, frame drops, and lighting
+         noise all show up. The drone confirms the tag, takes off, and holds the safe
+         distance through the leader's translations.</p>
+      <div class="video-row">
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_demo_a.mp4</span>
           </div>
-          <div class="pipeline-name">Tello camera</div>
-          <div class="pipeline-meta">720p · 30 fps · H.264 / UDP</div>
+          <video src="videos/cp_demo_a.mp4"
+                 poster="106a_final_project/demo/posters/cp2-real-aruco-1_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
         </div>
-
-        <div class="pipeline-conn">
-          <div class="pipeline-line">
-            <i class="pkt" style="--d: 0s"></i>
-            <i class="pkt" style="--d: -0.7s"></i>
-            <i class="pkt" style="--d: -1.4s"></i>
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_demo_b.mp4</span>
           </div>
-          <div class="pipeline-topic">
-            <span class="t">/tello/image_raw</span>
-            <span class="m">sensor_msgs/Image</span>
-          </div>
-        </div>
-
-        <div class="pipeline-stage" data-stage="detector">
-          <div class="pipeline-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
-          </div>
-          <div class="pipeline-name swap" data-aruco="tello_direct_io" data-face="face_detector">tello_direct_io</div>
-          <div class="pipeline-meta swap" data-aruco="cv2.aruco.detectMarkers · solvePnP" data-face="YOLOv8 detector · ReID lock">cv2.aruco.detectMarkers · solvePnP</div>
-        </div>
-
-        <div class="pipeline-conn accent">
-          <div class="pipeline-line">
-            <i class="pkt" style="--d: 0s"></i>
-            <i class="pkt" style="--d: -0.7s"></i>
-            <i class="pkt" style="--d: -1.4s"></i>
-          </div>
-          <div class="pipeline-topic">
-            <span class="t swap" data-aruco="/aruco/pose_3d" data-face="/face/pose">/aruco/pose_3d</span>
-            <span class="m">geometry_msgs/Pose</span>
-          </div>
-        </div>
-
-        <div class="pipeline-stage" data-stage="controller">
-          <div class="pipeline-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
-          </div>
-          <div class="pipeline-name swap" data-aruco="aruco_controller" data-face="face_controller">aruco_controller</div>
-          <div class="pipeline-meta swap" data-aruco="PD + LPF · 4-axis · target 1.5 m" data-face="image-based servo · face area = depth">PD + LPF · 4-axis · target 1.5 m</div>
-        </div>
-
-        <div class="pipeline-conn">
-          <div class="pipeline-line">
-            <i class="pkt" style="--d: 0s"></i>
-            <i class="pkt" style="--d: -0.7s"></i>
-            <i class="pkt" style="--d: -1.4s"></i>
-          </div>
-          <div class="pipeline-topic">
-            <span class="t">/cmd_vel</span>
-            <span class="m">geometry_msgs/Twist</span>
-          </div>
-        </div>
-
-        <div class="pipeline-stage" data-stage="drone">
-          <div class="pipeline-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 6l6 6m6-6l-6 6m0 0l6 6m-6-6l-6 6"/><circle cx="12" cy="12" r="2"/></svg>
-          </div>
-          <div class="pipeline-name">Tello drone</div>
-          <div class="pipeline-meta">RC UDP · port 8889 · motor actuation</div>
+          <video src="videos/cp_demo_b.mp4"
+                 poster="106a_final_project/demo/posters/cp2-real-aruco-2_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
         </div>
       </div>
+    </div>
 
-      <div class="pipeline-foot">
-        <span><strong>Toggle the mode</strong> — only the perception node and its
-        topic swap. The rest of the pipeline (<code>/cmd_vel</code> → Tello RC) is shared.</span>
-        <span class="pipeline-also"><code>/tello_action</code> — takeoff / land service runs alongside.</span>
+    <!-- Demo 3 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 03 · YOLOv8 Face Tracking</span>
+      <h3>Human (face) tracking.</h3>
+      <p>We swap the ArUco detector for YOLOv8. The drone waits for a stable face,
+         takes off automatically, holds the head near image center at ~1.5 m social
+         distance, and lands on prolonged loss.
+         <strong>Same control law, same state machine — only perception changes.</strong></p>
+      <div class="video-row">
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_face_a.mp4</span>
+          </div>
+          <video src="videos/cp_face_a.mp4"
+                 poster="106a_final_project/demo/posters/cp_face_a_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_face_b.mp4</span>
+          </div>
+          <video src="videos/cp_face_b.mp4"
+                 poster="106a_final_project/demo/posters/cp_face_b_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ CORE CODE · auto-playing Cursor-style demo ════════════ -->
-<section id="core">
+<!-- ════════════ SYSTEM ARCHITECTURE ════════════ -->
+<section id="system">
   <div class="container">
-    <span class="eyebrow">04 · Core code</span>
-    <h2>The full pipeline. Auto-playing.</h2>
+    <span class="eyebrow">05 · System Architecture</span>
+    <h2>Two perception modes, one target-pose interface, one safety-aware Tello bridge.</h2>
     <p class="lede">
-      From a raw camera frame on the Tello to a Twist command back over Wi-Fi —
-      five stages, one shared bus. The demo cycles automatically. Hover to pause.
-      Click any stage to jump.
+      Different perception sources feed the same ROS2 control contract. Each mode
+      converts camera observations into target error, smooths the signal, computes
+      a clipped <code>Twist</code> command, and sends it through one safety-aware Tello
+      bridge for real drone actuation.
     </p>
 
-    <div class="cursor-desktop" id="cd-root">
+    <div class="system-caption">
+      <p><strong>Main system message:</strong> Different perception sources. Same target-pose interface. Same ROS2 control contract. Single safety-aware Tello bridge.</p>
+    </div>
+
+    <div class="linear-arch" id="linear-arch">
+      <div class="linear-arch-toolbar">
+        <span class="linear-arch-title">Interactive node interaction diagram</span>
+        <span class="linear-arch-hint">Hover or click a block for details</span>
+      </div>
+      <div class="linear-arch-flow" role="list" aria-label="Drone following ROS2 pipeline">
+        <button class="linear-node active" type="button" role="listitem" data-title="Tello Camera Stream" data-subtitle="720p Wi-Fi video from the DJI/Ryze Tello" data-detail="Real onboard monocular camera|Sends video frames over Wi-Fi|Source for both ArUco and face-tracking modes">
+          <span class="step">01</span><span class="node-title">Camera</span><span class="node-subtitle">Tello camera stream</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Tracking Mode Selector" data-subtitle="ArUco mode or YOLOv8 face mode" data-detail="Selects which perception front end is active|Future: person tracking and voice-command mode selection|Only the perception source changes; downstream control stays shared">
+          <span class="step">02</span><span class="node-title">Mode Selector</span><span class="node-subtitle">ArUco or face</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Perception Front End" data-subtitle="OpenCV ArUco / YOLOv8 face detector" data-detail="ArUco mode detects marker ID and estimates marker pose|Face mode detects a face bounding box using YOLOv8|Converts raw image observations into target measurements">
+          <span class="step">03</span><span class="node-title">Perception</span><span class="node-subtitle">OpenCV / YOLOv8</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Target Pose Topic" data-subtitle="/aruco/pose_3d or /face/pose" data-detail="ArUco publishes marker pose to /aruco/pose_3d|Face tracking publishes normalized face offset and area to /face/pose|Both become target-error signals for control">
+          <span class="step">04</span><span class="node-title">Pose Topic</span><span class="node-subtitle">Target-pose interface</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Signal Conditioning" data-subtitle="EMA · derivative LPF · deadband · stale-frame guard" data-detail="Face mode uses EMA pose smoothing|ArUco mode uses derivative low-pass filtering and stale-frame hold/decay|Deadbands reduce jitter from small noisy errors">
+          <span class="step">05</span><span class="node-title">Smoothing</span><span class="node-subtitle">EMA / LPF / deadband</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Visual Servo Controller" data-subtitle="Target error → clipped Twist command" data-detail="Computes yaw, vertical, lateral, and forward/backward commands|Face mode uses center error and face-area distance servo|ArUco mode uses pose-based PD-style tracking|Outputs geometry_msgs/Twist on /cmd_vel">
+          <span class="step">06</span><span class="node-title">Controller</span><span class="node-subtitle">Clipped /cmd_vel</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Safety State Machine" data-subtitle="Stable lock → Follow → Search/Hover → Land" data-detail="Waits for stable visual lock before takeoff|Delays follow mode after takeoff|Hovers/searches on short target loss|Lands after prolonged target loss|Uses /tello_action for takeoff, land, and emergency stop">
+          <span class="step">07</span><span class="node-title">Safety</span><span class="node-subtitle">Lock / follow / land</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Tello IO Bridge" data-subtitle="/cmd_vel + /tello_action → djitellopy" data-detail="Single node owns the Tello video and RC connection|Prevents multiple nodes from fighting for drone hardware|Converts ROS Twist commands into Tello RC UDP commands">
+          <span class="step">08</span><span class="node-title">Tello Bridge</span><span class="node-subtitle">ROS to djitellopy</span>
+        </button>
+        <button class="linear-node" type="button" role="listitem" data-title="Drone Actuation" data-subtitle="RC UDP → motors" data-detail="Tello executes forward/backward, vertical, and yaw commands|Final real-hardware actuation layer">
+          <span class="step">09</span><span class="node-title">Motors</span><span class="node-subtitle">Real drone motion</span>
+        </button>
+      </div>
+      <div class="linear-detail" aria-live="polite">
+        <div>
+          <div class="kicker" id="linear-detail-kicker">Block 01</div>
+          <h3 id="linear-detail-title">Tello Camera Stream</h3>
+          <p id="linear-detail-subtitle">720p Wi-Fi video from the DJI/Ryze Tello</p>
+        </div>
+        <ul id="linear-detail-list">
+          <li>Real onboard monocular camera</li>
+          <li>Sends video frames over Wi-Fi</li>
+          <li>Source for both ArUco and face-tracking modes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-top: 28px;">
+      <div class="card"><div class="icon">◉</div><h3>Sensing</h3><p>The Tello camera streams monocular visual input from the real drone to the laptop.</p></div>
+      <div class="card"><div class="icon">⌖</div><h3>Perception</h3><p>ArUco or YOLOv8 extracts target position and publishes a target-pose signal.</p></div>
+      <div class="card"><div class="icon">◇</div><h3>Decision logic</h3><p>The state machine decides whether to idle, arm, follow, search, hover, or land.</p></div>
+      <div class="card"><div class="icon">↯</div><h3>Actuation</h3><p>The Tello bridge converts <code>/cmd_vel</code> and <code>/tello_action</code> into safe RC commands.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ PERCEPTION ════════════ -->
+<section id="perception">
+  <div class="container">
+    <span class="eyebrow">06 · Perception</span>
+    <h2>Two front ends produce the same kind of control signal.</h2>
+    <p class="lede">ArUco mode and face mode are intentionally different at the detector level, but both become target-error signals that the controller can servo on.</p>
+    <div class="grid-2" style="margin-top: 24px;">
+      <div class="card"><div class="icon">▦</div><h3>ArUco marker tracking</h3><p>OpenCV detects the printed marker ID, estimates pose with camera intrinsics, and publishes <code>/aruco/pose_3d</code>. The controller uses marker pose for lateral, distance, vertical, and yaw error.</p></div>
+      <div class="card"><div class="icon">□</div><h3>YOLOv8 face tracking</h3><p>YOLOv8 detects the face box. The node publishes normalized horizontal/vertical offset and face area on <code>/face/pose</code>, using stable face lock before takeoff.</p></div>
+    </div>
+    <div class="table-wrap" style="margin-top: 24px;">
+      <table>
+        <thead><tr><th>Mode</th><th>Measurement</th><th>Smoothing / guard</th><th>Control use</th></tr></thead>
+        <tbody>
+          <tr><td>ArUco</td><td>Marker pose and yaw</td><td>Derivative LPF, deadband, stale-frame hold/decay</td><td>Pose-based PD-style tracking</td></tr>
+          <tr><td>Face</td><td>Image offset and face area</td><td>EMA pose smoothing and derivative filtering</td><td>Centering plus face-area distance servo</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ CONTROL + SAFETY ════════════ -->
+<section id="safety">
+  <div class="container">
+    <span class="eyebrow">07 · Control + Safety</span>
+    <h2>Visual servoing is wrapped in a safety state machine.</h2>
+    <p class="lede">
+      Target error drives velocity commands: yaw keeps the target centered
+      horizontally, vertical velocity keeps it centered vertically, and forward
+      velocity uses ArUco depth or face area as a distance proxy. The drone does
+      not take off from a single noisy detection, does not follow stale visual
+      data indefinitely, and lands when the target is lost for too long.
+    </p>
+
+    <div class="state-row">
+      <div class="state idle">
+        <div class="num">01 · IDLE</div>
+        <div class="name"><span class="name-dot"></span>Idle</div>
+        <div class="desc">Disarmed. Waiting for tag &amp; takeoff.</div>
+      </div>
+      <div class="state arm">
+        <div class="num">02 · ARM</div>
+        <div class="name"><span class="name-dot"></span>Arm</div>
+        <div class="desc">Stable tag for ~2 s. Auto-takeoff.</div>
+      </div>
+      <div class="state fol">
+        <div class="num">03 · FOLLOW</div>
+        <div class="name"><span class="name-dot"></span>Follow</div>
+        <div class="desc">Track the tag at safe distance.</div>
+      </div>
+      <div class="state sea">
+        <div class="num">04 · SEARCH</div>
+        <div class="name"><span class="name-dot"></span>Search</div>
+        <div class="desc">Tag lost &lt; 2 s. Hover, yaw scan, retry.</div>
+      </div>
+      <div class="state lan">
+        <div class="num">05 · LAND</div>
+        <div class="name"><span class="name-dot"></span>Land</div>
+        <div class="desc">Tag lost &gt; 5 s. Soft-land. Disarm.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FAILURES ════════════ -->
+<section id="failures">
+  <div class="container">
+    <span class="eyebrow">08 · Failure Modes + Fixes</span>
+    <h2>Most of the work was safe behavior under unreliable perception.</h2>
+
+    <p class="lede">Most of the project was not making the drone move; it was making the drone behave safely when perception became unreliable.</p>
+
+    <div class="grid-3" style="margin-top: 24px;">
+      <div class="issue-card">
+        <span class="num">▲ 01</span>
+        <span class="head">Wi-Fi latency</span>
+        <span class="fix"><strong>Why:</strong> Video/control delay made commands stale, especially through VM networking.<br/><strong>Fix:</strong> Added timeout logic and used WSL on Windows so the Tello UDP socket maps directly through the host.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 02</span>
+        <span class="head">Pose jitter</span>
+        <span class="fix"><strong>Why:</strong> ArUco and YOLO detections flickered frame to frame.<br/><strong>Fix:</strong> Smoothed pose estimates with EMA / low-pass filtering before control.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 03</span>
+        <span class="head">Yaw oscillation</span>
+        <span class="fix"><strong>Why:</strong> The drone overcorrected small horizontal target errors.<br/><strong>Fix:</strong> Lower gains, derivative damping, deadbands, and command clipping reduced actuator chatter.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 04</span>
+        <span class="head">No true depth</span>
+        <span class="fix"><strong>Why:</strong> The Tello has a monocular camera, so distance is not directly observed.<br/><strong>Fix:</strong> ArUco pose gives metric range; face mode uses face-area as an approximate distance proxy.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 05</span>
+        <span class="head">Target loss</span>
+        <span class="fix"><strong>Why:</strong> Occlusion or leaving the camera frame removes the visual signal.<br/><strong>Fix:</strong> Short loss triggers hover/search; long loss falls through to safe landing.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 06</span>
+        <span class="head">Tello IO conflict</span>
+        <span class="fix"><strong>Why:</strong> Multiple nodes cannot safely own the same video/control hardware path.<br/><strong>Fix:</strong> A single Tello IO bridge owns frame handling and RC command output.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ IMPLEMENTATION ════════════ -->
+<section id="implementation">
+  <div class="container">
+    <span class="eyebrow">09 · Implementation Details</span>
+    <h2>What we built: hardware, software, nodes, and topics.</h2>
+    <p class="lede">
+      The implementation is intentionally small: a laptop ground station talks to
+      a real Tello over Wi-Fi, perception nodes publish target pose, controller
+      nodes publish <code>/cmd_vel</code>, and a single Tello IO path converts those
+      commands into RC motion.
+    </p>
+
+    <div class="grid-4" style="margin-top: 24px;">
+      <div class="card">
+        <div class="icon">⌁</div>
+        <h3>Hardware</h3>
+        <ul class="tight">
+          <li>DJI/Ryze Tello</li>
+          <li>Laptop ground station</li>
+          <li>Tello Wi-Fi link</li>
+          <li>Printed ArUco marker</li>
+          <li>Onboard monocular camera</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon">{ }</div>
+        <h3>Software stack</h3>
+        <ul class="tight">
+          <li>ROS 2 Humble</li>
+          <li>Python + OpenCV</li>
+          <li>YOLOv8</li>
+          <li>djitellopy / Tello UDP</li>
+          <li><code>geometry_msgs/Twist</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon">◈</div>
+        <h3>ROS nodes</h3>
+        <ul class="tight">
+          <li><code>face_detector_node</code> reads frames, detects faces, publishes pose, and owns RC command output.</li>
+          <li><code>face_controller_node</code> waits for stable lock, commands takeoff, follows, and lands on long loss.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon">⇄</div>
+        <h3>Topics / services</h3>
+        <ul class="tight">
+          <li><code>/face/pose</code> · face target position</li>
+          <li><code>/cmd_vel</code> · velocity command</li>
+          <li><code>/tello_action</code> · takeoff / land / emergency</li>
+          <li><code>/leader/pose</code> · ArUco target pose</li>
+          <li><code>/leader/twist</code> · estimated target velocity</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 44px;">Appendix preview · core code stages</h3>
+    <p>This technical appendix keeps longer code explanations out of the main report flow. Open it when you want file-level details.</p>
+
+    <details class="appendix-details">
+      <summary>Show expandable code-stage appendix: perception, controllers, and safety state machine</summary>
+      <div class="cursor-desktop" id="cd-root">
       <div class="cd-titlebar">
         <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
         <span class="cd-title">106A · Drone Pipeline</span>
@@ -1605,7 +1941,7 @@
             <span class="cd-stage-icon">②</span>
             <div>
               <div class="cd-stage-name">Face perception</div>
-              <div class="cd-stage-meta">YOLOv8 · ReID</div>
+              <div class="cd-stage-meta">YOLOv8 · stable lock</div>
             </div>
           </button>
           <button class="cd-stage" data-stage="aruco-ctrl">
@@ -1699,10 +2035,10 @@
             </div>
 
             <div class="cd-code-pane" data-pane="face-perc">
-<pre class="code"><span class="c-cm"># face_perception.py · YOLOv8 box + ReID → center / area pose</span>
+<pre class="code"><span class="c-cm"># face_perception.py · YOLOv8 box → center / area pose</span>
 <span class="c-kw">def</span> <span class="c-fn">on_frame</span>(<span class="c-pun">self</span>, frame):
     boxes = <span class="c-pun">self</span>.<span class="c-fn">yolo</span>(frame).boxes
-    face  = <span class="c-pun">self</span>.<span class="c-fn">select_target</span>(boxes, <span class="c-pun">self</span>.reid)
+    face  = <span class="c-pun">self</span>.<span class="c-fn">largest_stable_face</span>(boxes)
     <span class="c-kw">if</span> face <span class="c-kw">is</span> <span class="c-kw">None</span>:
         <span class="c-kw">return</span> <span class="c-pun">self</span>.<span class="c-fn">haar_fallback</span>(frame)   <span class="c-cm"># transient YOLO loss</span>
 
@@ -1776,63 +2112,123 @@
           </div>
         </div>
       </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ════════════ FUTURE ════════════ -->
+<section id="future">
+  <div class="container">
+    <span class="eyebrow">10 · Future Work / Conclusion</span>
+    <h2>What would make the system safer and more capable?</h2>
+
+    <div class="grid-4" style="margin-top: 24px;">
+      <div class="future-card">
+        <span class="num">→ 01</span>
+        <span class="head">Voice-selectable tracking</span>
+        <span class="desc">A multimodal operator command to switch between tracking
+          modes — ArUco, face, or full-person. Voice frees the operator's hands during a demo.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 02</span>
+        <span class="head">Multi-follower formation</span>
+        <span class="desc">Use shared TF frames so multiple drones maintain formation
+          offsets from the leader instead of all targeting the same point.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 03</span>
+        <span class="head">Better range sensing</span>
+        <span class="desc">Fuse vision with stereo, UWB, laser, or calibrated target-size
+          estimation so distance control is less fragile than monocular video alone.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 04</span>
+        <span class="head">Lightweight edge inference</span>
+        <span class="desc">Reduce laptop dependency with ONNX, smaller models, lower-resolution
+          inference, or a larger drone platform that can carry edge compute.</span>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top: 32px;">
+      The project met its core design goal: a real Tello drone can autonomously
+      follow a visual target through a ROS 2 perception-control pipeline while
+      enforcing basic safety behaviors. The main limitation is that the Tello's
+      monocular camera and Wi-Fi link make distance and latency estimation fragile,
+      so future systems should add stronger range sensing and lower-latency inference.
+    </p>
+  </div>
+</section>
+
+<!-- ════════════ TEAM ════════════ -->
+<section id="team">
+  <div class="container">
+    <span class="eyebrow">11 · Team Contributions</span>
+    <h2>Who built what.</h2>
+    <p class="lede">The team combined computer vision, controls, UAV integration, hardware testing, and report/website writing.</p>
+
+    <div class="grid-4" style="margin-top: 28px;">
+      <div class="team-card">
+        <div class="avatar">MW</div>
+        <span class="role">CS · Cogsci</span>
+        <div class="name">Max Wang</div>
+        <div class="bio">YOLOv8 face tracking, failure-mode analysis, report and website writing.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">TZ</div>
+        <span class="role">EECS</span>
+        <div class="name">Tianren (Tyler) Zeng</div>
+        <div class="bio">Computer vision, obstacle/target tracking, simulation, and system integration.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">GJ</div>
+        <span class="role">ME</span>
+        <div class="name">Gia Jeong</div>
+        <div class="bio">Controls, robotics design, hardware testing, and safety evaluation.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">YP</div>
+        <span class="role">EECS</span>
+        <div class="name">Yuanbo (Aaron) Pang</div>
+        <div class="bio">UAV systems, ROS 2/Tello integration, architecture support, and debugging.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ OPERATION ════════════ -->
-<section id="operation">
+<!-- ════════════ RESOURCES / ADDITIONAL MATERIALS ════════════ -->
+<section id="resources">
   <div class="container">
-    <span class="eyebrow">05 · Operation</span>
-    <h2>Five-state safety machine.</h2>
+    <span class="eyebrow">12 · Resources / Additional Materials</span>
+    <h2>Where to verify the project and explore the appendix.</h2>
     <p class="lede">
-      The leader takes off and is teleoperated. The follower confirms the tag, takes
-      off, locks at safe distance, copies the leader's velocity, recovers if the tag
-      is lost briefly, and lands cleanly on long loss.
+      This final appendix keeps verification material in one place: the GitHub
+      source link, demo videos, interactive follower toy model, Gazebo reference
+      clip, hardware bridge scripts, launch commands, README, model files, and
+      ArUco marker utilities.
     </p>
 
-    <div class="state-row">
-      <div class="state idle">
-        <div class="num">01 · IDLE</div>
-        <div class="name"><span class="name-dot"></span>Idle</div>
-        <div class="desc">Disarmed. Waiting for tag &amp; takeoff.</div>
-      </div>
-      <div class="state arm">
-        <div class="num">02 · ARM</div>
-        <div class="name"><span class="name-dot"></span>Arm</div>
-        <div class="desc">Stable tag for ~2 s. Auto-takeoff.</div>
-      </div>
-      <div class="state fol">
-        <div class="num">03 · FOLLOW</div>
-        <div class="name"><span class="name-dot"></span>Follow</div>
-        <div class="desc">Track the tag at safe distance.</div>
-      </div>
-      <div class="state sea">
-        <div class="num">04 · SEARCH</div>
-        <div class="name"><span class="name-dot"></span>Search</div>
-        <div class="desc">Tag lost &lt; 2 s. Hover, yaw scan, retry.</div>
-      </div>
-      <div class="state lan">
-        <div class="num">05 · LAND</div>
-        <div class="name"><span class="name-dot"></span>Land</div>
-        <div class="desc">Tag lost &gt; 5 s. Soft-land. Disarm.</div>
-      </div>
+    <div class="grid-4" style="margin-top: 24px; margin-bottom: 28px;">
+      <div class="card"><div class="icon">Git</div><h3>Code</h3><p><a href="https://github.com/Tyler6666666/106a_final_project.git" target="_blank" rel="noopener">ROS 2 / Gazebo GitHub repository</a></p></div>
+      <div class="card"><div class="icon">Deck</div><h3>Google Slides</h3><p>Presentation deck link should be added here before final submission.</p></div>
+      <div class="card"><div class="icon">▶</div><h3>Demo videos</h3><p><a href="videos/ros-sim.mp4">Gazebo</a> · <a href="videos/cp_demo_a.mp4">ArUco A</a> · <a href="videos/cp_demo_b.mp4">ArUco B</a> · <a href="videos/cp_face_a.mp4">Face A</a> · <a href="videos/cp_face_b.mp4">Face B</a></p></div>
+      <div class="card"><div class="icon">↧</div><h3>Launch files</h3><p><code>vision_control.launch.py</code>, <code>tello_aruco.launch.py</code>, and <code>tello_face.launch.py</code>.</p></div>
     </div>
-  </div>
-</section>
 
-<!-- ════════════ ONLINE SIM · interactive in-browser ════════════ -->
-<section id="online">
-  <div class="container">
-    <span class="eyebrow">06 · Try it online</span>
-    <h2>Drag the AR tag. The drone follows.</h2>
-    <p class="lede">
-      The same PD + low-pass filter and 5-state safety machine as the real
-      project, running in your browser. Drag the marker around — or leave it
-      idle and it'll auto-orbit on a Lissajous figure-eight, just like
-      <code>marker_move.py</code> in the Gazebo sim.
-    </p>
+    <div class="table-wrap" style="margin-bottom: 36px;">
+      <table>
+        <thead><tr><th>Appendix item</th><th>Where it lives / why it matters</th></tr></thead>
+        <tbody>
+          <tr><td>README</td><td>Local setup and deployment notes for the static site and external ROS 2 repo.</td></tr>
+          <tr><td>ROS package structure</td><td><code>drone_simulation</code>, <code>my_drone_vision</code>, Gazebo launch files, perception nodes, and controller nodes in the GitHub repository.</td></tr>
+          <tr><td>Model files</td><td>YOLOv8 weights are downloaded on first face-tracking launch; simulation models live in the ROS 2 / Gazebo workspace.</td></tr>
+          <tr><td>Tello documentation</td><td>Tello SDK / UDP command references explain takeoff, land, emergency, battery, station mode, and RC control.</td></tr>
+          <tr><td>ArUco marker files</td><td><code>tt_show_aruco.py</code> renders a marker on the RoboMaster TT LED matrix; printed marker assets should be kept with demo materials.</td></tr>
+        </tbody>
+      </table>
+    </div>
 
+    <h3>Interactive appendix · browser follower toy model</h3>
     <div class="online-sim" id="os-root">
       <div class="os-titlebar">
         <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
@@ -1889,194 +2285,11 @@
         <span><strong>Trajectory:</strong> spatial figure-eight (Lissajous 1:2)</span>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ════════════ DEMOS ════════════ -->
-<section id="demos">
-  <div class="container">
-    <span class="eyebrow">07 · Live Demos</span>
-    <h2>Three demos. One code path.</h2>
-    <p class="lede">
-      Same perception → estimation → control loop, three different deployments.
-     
-    </p>
-
-    <!-- Demo 1 -->
-    <div class="demo-block">
-      <span class="demo-tag"><span class="live-dot"></span>Demo 01 · Sim · Checkpoint 1</span>
-      <h3>Gazebo simulation.</h3>
-      <p>Before any real flight we validated the entire pipeline inside ROS 2 + Gazebo
-         Classic 11. Same nodes, same topics, simulated pixels.</p>
-      <div class="video-card">
-        <div class="video-header">
-          <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-          <span class="filename">ros-sim.mp4</span>
-        </div>
-        <video src="videos/ros-sim.mp4"
-               controls muted loop playsinline preload="metadata">
-          Your browser does not support HTML5 video.
-        </video>
-      </div>
-      <div class="video-meta">
-        <span><strong>Source:</strong> Gazebo Classic 11 · simulated Tello camera</span>
-        <span><strong>Tracking topic:</strong> <code>/aruco/pose_3d</code> → <code>/drone1/cmd_vel</code></span>
-        <span><strong>Trajectory:</strong> spatial figure-eight (Lissajous 1:2)</span>
-      </div>
-    </div>
-
-    <!-- Demo 2 -->
-    <div class="demo-block">
-      <span class="demo-tag"><span class="live-dot"></span>Demo 02 · Real ArUco · Checkpoint 2</span>
-      <h3>Real Tello tracking an ArUco tag.</h3>
-      <p>Same code path in the real world. Wi-Fi latency, frame drops, and lighting
-         noise all show up. The drone confirms the tag, takes off, and holds the safe
-         distance through the leader's translations.</p>
-      <div class="video-row">
-        <div class="video-card">
-          <div class="video-header">
-            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-            <span class="filename">cp_demo_a.mp4</span>
-          </div>
-          <video src="videos/cp_demo_a.mp4"
-                 poster="106a_final_project/demo/posters/cp2-real-aruco-1_3x.jpg"
-                 controls muted loop playsinline preload="metadata">
-          </video>
-        </div>
-        <div class="video-card">
-          <div class="video-header">
-            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-            <span class="filename">cp_demo_b.mp4</span>
-          </div>
-          <video src="videos/cp_demo_b.mp4"
-                 poster="106a_final_project/demo/posters/cp2-real-aruco-2_3x.jpg"
-                 controls muted loop playsinline preload="metadata">
-          </video>
-        </div>
-      </div>
-    </div>
-
-    <!-- Demo 3 -->
-    <div class="demo-block">
-      <span class="demo-tag"><span class="live-dot"></span>Demo 03 · Face · Stretch</span>
-      <h3>Human (face) tracking.</h3>
-      <p>We swap the ArUco detector for YOLOv8. The drone waits for a stable face,
-         takes off automatically, holds the head near image center at ~1.5 m social
-         distance, and lands on prolonged loss.
-         <strong>Same control law, same state machine — only perception changes.</strong></p>
-      <div class="video-row">
-        <div class="video-card">
-          <div class="video-header">
-            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-            <span class="filename">cp_face_a.mp4</span>
-          </div>
-          <video src="videos/cp_face_a.mp4"
-                 poster="106a_final_project/demo/posters/cp_face_a_3x.jpg"
-                 controls muted loop playsinline preload="metadata">
-          </video>
-        </div>
-        <div class="video-card">
-          <div class="video-header">
-            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-            <span class="filename">cp_face_b.mp4</span>
-          </div>
-          <video src="videos/cp_face_b.mp4"
-                 poster="106a_final_project/demo/posters/cp_face_b_3x.jpg"
-                 controls muted loop playsinline preload="metadata">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════ FAILURES ════════════ -->
-<section id="failures">
-  <div class="container">
-    <span class="eyebrow">08 · Failures &amp; Mitigations</span>
-    <h2>Six issues we hit — and the fixes that ship.</h2>
-
-    <div class="grid-3" style="margin-top: 24px;">
-      <div class="issue-card">
-        <span class="num">▲ 01</span>
-        <span class="head">Wi-Fi drops &amp; network in VMs</span>
-        <span class="fix">Controlled timeout for Wi-Fi instability; switched from
-          Docker (system-agnostic) to <strong>WSL on Windows</strong> so the Tello UDP
-          socket maps directly through the host.</span>
-      </div>
-      <div class="issue-card">
-        <span class="num">▲ 02</span>
-        <span class="head">ArUco pose flicker</span>
-        <span class="fix">EMA smoothing filter on the translation component of the pose.</span>
-      </div>
-      <div class="issue-card">
-        <span class="num">▲ 03</span>
-        <span class="head">Sudden tracking errors</span>
-        <span class="fix">PD control with a low-pass filter cleans up noisy pose
-          estimates before they reach the actuator.</span>
-      </div>
-      <div class="issue-card">
-        <span class="num">▲ 04</span>
-        <span class="head">Half-second occlusions</span>
-        <span class="fix">Search state machine: hover, yaw-scan, retry, fall through
-          to safe-landing if the scan exhausts.</span>
-      </div>
-      <div class="issue-card">
-        <span class="num">▲ 05</span>
-        <span class="head">Multi-node Tello IO latency</span>
-        <span class="fix">Single owner pattern — one
-          <code>tello_direct_io_node</code> wraps the DJI Tello packages and handles
-          everything end-to-end.</span>
-      </div>
-      <div class="issue-card">
-        <span class="num">▲ 06</span>
-        <span class="head">Inconsistent video stream</span>
-        <span class="fix">Smoothed video quality through Tekko frame handling, and
-          moved detection in-process to remove the ROS-image round trip.</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════ FUTURE ════════════ -->
-<section id="future">
-  <div class="container">
-    <span class="eyebrow">09 · Future Plans</span>
-    <h2>Four directions we want to take this.</h2>
-
-    <div class="grid-4" style="margin-top: 24px;">
-      <div class="future-card">
-        <span class="num">→ 01</span>
-        <span class="head">Voice-selectable tracking</span>
-        <span class="desc">A multimodal operator command to switch between tracking
-          modes — ArUco, face, or full-person. Voice frees the operator's hands during a demo.</span>
-      </div>
-      <div class="future-card">
-        <span class="num">→ 02</span>
-        <span class="head">Multi-follower formation</span>
-        <span class="desc">Use shared TF frames so multiple drones maintain formation
-          offsets from the leader instead of all targeting the same point.</span>
-      </div>
-      <div class="future-card">
-        <span class="num">→ 03</span>
-        <span class="head">Mental-mapping replay</span>
-        <span class="desc">The follower remembers another drone's path and replays
-          it later with obstacle awareness.</span>
-      </div>
-      <div class="future-card">
-        <span class="num">→ 04</span>
-        <span class="head">Onboard inference</span>
-        <span class="desc">Move perception to a Jetson companion to cut Wi-Fi latency
-          and drop the base-station dependency.</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════ HARDWARE BRIDGES ════════════ -->
-<section id="hardware">
-  <div class="container">
-    <span class="eyebrow">10 · Real-hardware bridges</span>
+    <h3 style="margin-top: 44px;">Real-hardware bridges</h3>
+    <p>These utilities are part of the technical appendix because they connect the static report back to physical Tello hardware.</p>
+<div id="hardware" class="resource-subsection">
+    <span class="eyebrow">12A · Real-hardware bridges</span>
     <h2>Two utility scripts that target the physical Tello.</h2>
     <div class="grid-2" style="margin-top: 24px;">
       <div class="card">
@@ -2098,13 +2311,12 @@
           simulation demo.</p>
       </div>
     </div>
-  </div>
-</section>
+</div>
 
-<!-- ════════════ QUICKSTART ════════════ -->
-<section id="run">
-  <div class="container">
-    <span class="eyebrow">11 · Quickstart</span>
+
+    <h3 style="margin-top: 44px;">Quickstart</h3>
+<div id="run" class="resource-subsection">
+    <span class="eyebrow">12B · Quickstart</span>
     <h2>How to run it.</h2>
     <p class="lede">
       Requires Ubuntu 22.04 (or WSL 2 on Windows) + ROS 2 Humble + Gazebo Classic 11.
@@ -2186,8 +2398,12 @@ ros2 launch my_drone_vision tello_face.launch.py
           after sourcing <code>install/setup.bash</code>.</p>
       </div>
     </div>
+</div>
+
   </div>
 </section>
+
+
 
 <!-- ════════════ FOOTER ════════════ -->
 <footer>
@@ -2230,16 +2446,15 @@ ros2 launch my_drone_vision tello_face.launch.py
         id: 'face-perc',
         eyebrow: 'Stage 02 / 05 · Perception',
         title: 'Face perception',
-        prompt: 'Swap the marker detector for YOLOv8 + ReID. Same Pose message, different signal.',
+        prompt: 'Swap the marker detector for YOLOv8 face detection. Same Pose-like message, different signal.',
         thought: 'Reading face_perception.py · 0.9 s',
         body:
-          '<p>Run <strong>YOLOv8</strong> on every frame, then <strong>ReID</strong> picks the same ' +
-          'person out of multiple faces (locks identity at first detection).</p>' +
+          '<p>Run <strong>YOLOv8</strong> on every frame, then require a stable face detection before takeoff.</p>' +
           '<p>Output is a <em>pose-like</em> message: normalized image-center error in x/y, and the ' +
           'face <strong>area</strong> packed into <code>z</code> as a depth proxy.</p>',
         files: [
           { name: 'face_perception.py', plus: '+41', minus: '−0', color: 'var(--onyx-outline)' },
-          { name: 'reid_tracker.py',    plus: '+18', minus: '−2', color: 'var(--forest-green-action)' },
+          { name: 'face_lock.py',       plus: '+18', minus: '−2', color: 'var(--forest-green-action)' },
         ],
         codeTab: 'face_perception.py',
         codeMeta: 'my_drone_vision · perception',
@@ -2847,6 +3062,38 @@ ros2 launch my_drone_vision tello_face.launch.py
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
+  })();
+
+
+  // ───────────── Linear architecture diagram · hover/click details ─────────────
+  (function () {
+    const root = document.getElementById('linear-arch');
+    if (!root) return;
+    const nodes = Array.from(root.querySelectorAll('.linear-node'));
+    const kicker = document.getElementById('linear-detail-kicker');
+    const title = document.getElementById('linear-detail-title');
+    const subtitle = document.getElementById('linear-detail-subtitle');
+    const list = document.getElementById('linear-detail-list');
+
+    function show(node) {
+      nodes.forEach(n => n.classList.toggle('active', n === node));
+      const idx = String(nodes.indexOf(node) + 1).padStart(2, '0');
+      kicker.textContent = `Block ${idx}`;
+      title.textContent = node.dataset.title || '';
+      subtitle.textContent = node.dataset.subtitle || '';
+      list.innerHTML = '';
+      (node.dataset.detail || '').split('|').filter(Boolean).forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    nodes.forEach((node) => {
+      node.addEventListener('mouseenter', () => show(node));
+      node.addEventListener('focus', () => show(node));
+      node.addEventListener('click', () => show(node));
+    });
   })();
 
   // ───────────── Architecture pipeline · mode toggle ─────────────

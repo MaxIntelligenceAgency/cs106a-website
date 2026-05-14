@@ -34,17 +34,29 @@ vercel --prod
 
 ## Site structure
 
-1. Hero · live in-browser drone-follower sim
-2. Team · 4 contributors
-3. Motivation · convoying for UAVs
-4. System architecture · animated ROS pipeline (ArUco / Face mode toggle)
-5. Core code · auto-playing 5-stage Cursor-Desktop demo
-6. Operation · 5-state safety machine
-7. Try it online · interactive AR-tag follower (drag + auto-orbit)
-8. Live demos · sim + real classroom footage
-9. Failures & mitigations · 6 issues we hit
-10. Future plans · 4 directions
-11. Real-hardware bridges · `tello-station.sh` + `tt_show_aruco.py`
-12. Quickstart
+The page is organized as a static technical case study: story first, proof second, and appendix material last.
+
+1. Hero · what the project is, core metrics, and a real Tello demo loop
+2. Introduction · goal and system overview
+3. Motivation · why noisy monocular video + Wi-Fi control is interesting
+4. Results / Demo Videos · Gazebo, ArUco, and YOLOv8 face-tracking evidence
+5. System Architecture · interactive linear pipeline from camera to motors
+6. Perception · ArUco and YOLOv8 face modes with shared target-pose interface
+7. Control + Safety · visual servoing and 5-state safety machine
+8. Failure Modes + Fixes · six real issues with causes and mitigations
+9. Implementation Details · hardware, software stack, nodes, topics, and expandable code-stage appendix
+10. Future Work / Conclusion · limitations and next steps
+11. Team Contributions · major contributions by member
+12. Resources / Additional Materials · GitHub, slides placeholder, videos, package appendix, interactive sim, hardware bridges, and quickstart
+
+## Vercel static site settings
+
+For branch Preview Deployments and production deploys, this repository is a plain static site:
+
+- Framework Preset: Other
+- Root Directory: `./`
+- Build Command: leave empty
+- Output Directory: `./`
+- Install Command: leave empty
 
 — EE/CS 106A · Spring 2026
