@@ -1,8 +1,17 @@
 # macOS
 .DS_Store
 
-# Vercel
+# Vercel / Next.js
 .vercel/
+.next/
+out/
+node_modules/
+public/videos/
+*.tsbuildinfo
+.env*.local
+
+# Codex/GitHub PR review packets
+.codex/pr-feedback/
 
 # Editor noise
 .vscode/
