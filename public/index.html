@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Autonomous Safe Drone Convoy Following · CS 106A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-app="drone-convoy-showcase">
+
+<!-- ════════════ NAV ════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <span class="brand-mark">⌖</span>
+      106A · Drone Convoy
+    </div>
+    <ul>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#motivation">Motivation</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#core">Core code</a></li>
+      <li><a href="#operation">Operation</a></li>
+      <li><a href="#online">Try it</a></li>
+      <li><a href="#demos">Demos</a></li>
+      <li><a href="#failures">Failures</a></li>
+      <li><a href="#future">Future</a></li>
+    </ul>
+    <a class="nav-cta" href="https://github.com/Tyler6666666/106a_final_project.git" target="_blank" rel="noopener">
+      GitHub →
+    </a>
+  </div>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- left -->
+      <div>
+        <span class="hero-pill"><span class="live-dot"></span> EECS / BioE / ME C106A · Spring 2026 · Final Project</span>
+        <h1 class="title">Autonomous Safe<br/>Drone Convoy<br/>Following.</h1>
+        <p class="hero-sub">
+          A leader–follower drone system. A teleoperated leader carries a target;
+          a Tello follower autonomously locks on with vision and PD control,
+          stays at a strict safe distance, and lands cleanly when the visual
+          lock is lost. Two interchangeable perception backbones, one shared
+          ROS&nbsp;2 controller.
+        </p>
+        <div style="margin-bottom: 22px;">
+          <span class="pill aruco">ArUco · 6-DoF</span>
+          <span class="pill face">YOLOv8 · Face</span>
+          <span class="pill">ROS 2 Humble</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn primary" href="#demos">Watch the demos <span class="arrow">→</span></a>
+          <a class="btn outline" href="#architecture">System architecture</a>
+          <a class="btn ghost" href="https://github.com/Tyler6666666/106a_final_project.git" target="_blank" rel="noopener">GitHub repo</a>
+        </div>
+      </div>
+
+      <!-- right: live drone sim · same logic as #online, no toolbar -->
+      <div class="hero-sim">
+        <div class="os-titlebar">
+          <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <span class="os-title">drone_sim · live</span>
+          <div class="hero-sim-pill">
+            <span class="live-dot"></span>FOLLOW · /cmd_vel
+          </div>
+        </div>
+        <div class="os-stage hero-sim-stage" id="hero-sim-stage">
+          <canvas class="os-canvas" id="hero-sim-canvas"></canvas>
+          <div class="hero-sim-hint" id="hero-sim-hint">↓ drag the tag · or just watch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="num">3</div>
+        <div class="lbl">Live demos</div>
+      </div>
+      <div class="stat">
+        <div class="num">2</div>
+        <div class="lbl">Perception modes</div>
+      </div>
+      <div class="stat">
+        <div class="num">$100</div>
+        <div class="lbl">Drone · self-funded</div>
+      </div>
+      <div class="stat">
+        <div class="num">30 s</div>
+        <div class="lbl">Stable-tracking bar</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<hr class="section-divider" />
+
+<!-- ════════════ TEAM ════════════ -->
+<section id="team">
+  <div class="container">
+    <span class="eyebrow">01 · Team</span>
+    <h2>Four students. Four backgrounds.</h2>
+    <p class="lede">From CS, EECS, and Mechanical Engineering — covering ML/RL, computer vision, manipulation, and UAV systems.</p>
+
+    <div class="grid-4" style="margin-top: 28px;">
+      <div class="team-card">
+        <div class="avatar">MW</div>
+        <span class="role">CS · Cogsci</span>
+        <div class="name">Max Wang</div>
+        <div class="bio">Studies ML and RL methods. Interest in autonomous driving and humanoids.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">TZ</div>
+        <span class="role">EECS</span>
+        <div class="name">Tianren (Tyler) Zeng</div>
+        <div class="bio">Computer vision, GPS-free obstacle avoidance, RL for humanoid control.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">GJ</div>
+        <span class="role">ME</span>
+        <div class="name">Gia Jeong</div>
+        <div class="bio">Tactile sensing and suction-cup manipulation. Previously: human-following quadruped, autonomous car.</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar">YP</div>
+        <span class="role">EECS</span>
+        <div class="name">Yuanbo (Aaron) Pang</div>
+        <div class="bio">VLA models on whole-body robots. UAV systems work.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ MOTIVATION ════════════ -->
+<section id="motivation">
+  <div class="container">
+    <span class="eyebrow">02 · Motivation</span>
+    <h2>Convoying is mature in cars. Under-exploited for drones.</h2>
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p class="lede">
+          In domains where full autonomy is infeasible — inspection, search-and-rescue,
+          warehouse logistics — <strong>convoying</strong> lets one operator command many
+          robots with high precision and lower risk than running each independently.
+          The pattern is well-understood for ground vehicles. It is barely touched for UAVs.
+        </p>
+        <p>
+          We prototype that idea on <strong>compute-constrained UAV hardware</strong>:
+          a $100 self-funded Tello drone with a 720p / 30 fps camera, a base-station
+          laptop running ROS 2 Humble, and a Wi-Fi link doing all the heavy lifting.
+        </p>
+      </div>
+      <div class="card">
+        <div class="icon">⌬</div>
+        <h3>Hardware</h3>
+        <ul class="tight">
+          <li><strong>DJI Tello</strong> · $100 (self-funded)</li>
+          <li><strong>Camera</strong> · 720p, 30 fps</li>
+          <li><strong>Compute</strong> · base-station laptop, perception off-board</li>
+          <li><strong>Network</strong> · Tello UDP RC + H.264 video over Wi-Fi</li>
+          <li><strong>OS</strong> · ROS 2 Humble (Ubuntu 22.04 / WSL on Windows)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 48px;">Aim · autonomous following with safe failure modes.</h3>
+    <div class="grid-3" style="margin-top: 16px;">
+      <div class="card">
+        <div class="icon">◎</div>
+        <h3>Goal</h3>
+        <p>Stable moderate-speed following using ArUco markers, with safe-landing protocols if the visual lock is lost.</p>
+      </div>
+      <div class="card">
+        <div class="icon">✓</div>
+        <h3>Success bar</h3>
+        <p><strong>30 s of continuous autonomous tracking</strong> — maintaining a safe distance the entire time.</p>
+      </div>
+      <div class="card">
+        <div class="icon">↗</div>
+        <h3>Stretch</h3>
+        <p>Anticipate target acceleration · reacquire after temporary occlusion · extend perception swap to face / person tracking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ ARCHITECTURE ════════════ -->
+<section id="architecture">
+  <div class="container">
+    <span class="eyebrow">03 · System Architecture</span>
+    <h2>Two perception pipelines. One shared ROS bus.</h2>
+    <p class="lede">
+      Used <strong>ROS 2 Humble</strong> for communication between the base station and
+      the drone. Both modes publish the same <code>Twist</code> command. Only the
+      perception source changes; safety actions stay unified through <code>/tello_action</code>.
+    </p>
+
+    <div class="pipeline" id="pipeline" data-mode="aruco">
+      <div class="pipeline-toolbar">
+        <span class="pipeline-eyebrow">PERCEPTION MODE</span>
+        <button class="pipeline-mode active" data-mode="aruco">
+          <span class="md-dot orange"></span>ArUco
+        </button>
+        <button class="pipeline-mode" data-mode="face">
+          <span class="md-dot green"></span>Face
+        </button>
+        <span class="pipeline-live"><span class="lv-dot"></span>live data flow</span>
+      </div>
+
+      <div class="pipeline-flow">
+        <div class="pipeline-stage" data-stage="camera">
+          <div class="pipeline-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>
+          </div>
+          <div class="pipeline-name">Tello camera</div>
+          <div class="pipeline-meta">720p · 30 fps · H.264 / UDP</div>
+        </div>
+
+        <div class="pipeline-conn">
+          <div class="pipeline-line">
+            <i class="pkt" style="--d: 0s"></i>
+            <i class="pkt" style="--d: -0.7s"></i>
+            <i class="pkt" style="--d: -1.4s"></i>
+          </div>
+          <div class="pipeline-topic">
+            <span class="t">/tello/image_raw</span>
+            <span class="m">sensor_msgs/Image</span>
+          </div>
+        </div>
+
+        <div class="pipeline-stage" data-stage="detector">
+          <div class="pipeline-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+          </div>
+          <div class="pipeline-name swap" data-aruco="tello_direct_io" data-face="face_detector">tello_direct_io</div>
+          <div class="pipeline-meta swap" data-aruco="cv2.aruco.detectMarkers · solvePnP" data-face="YOLOv8 detector · ReID lock">cv2.aruco.detectMarkers · solvePnP</div>
+        </div>
+
+        <div class="pipeline-conn accent">
+          <div class="pipeline-line">
+            <i class="pkt" style="--d: 0s"></i>
+            <i class="pkt" style="--d: -0.7s"></i>
+            <i class="pkt" style="--d: -1.4s"></i>
+          </div>
+          <div class="pipeline-topic">
+            <span class="t swap" data-aruco="/aruco/pose_3d" data-face="/face/pose">/aruco/pose_3d</span>
+            <span class="m">geometry_msgs/Pose</span>
+          </div>
+        </div>
+
+        <div class="pipeline-stage" data-stage="controller">
+          <div class="pipeline-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+          </div>
+          <div class="pipeline-name swap" data-aruco="aruco_controller" data-face="face_controller">aruco_controller</div>
+          <div class="pipeline-meta swap" data-aruco="PD + LPF · 4-axis · target 1.5 m" data-face="image-based servo · face area = depth">PD + LPF · 4-axis · target 1.5 m</div>
+        </div>
+
+        <div class="pipeline-conn">
+          <div class="pipeline-line">
+            <i class="pkt" style="--d: 0s"></i>
+            <i class="pkt" style="--d: -0.7s"></i>
+            <i class="pkt" style="--d: -1.4s"></i>
+          </div>
+          <div class="pipeline-topic">
+            <span class="t">/cmd_vel</span>
+            <span class="m">geometry_msgs/Twist</span>
+          </div>
+        </div>
+
+        <div class="pipeline-stage" data-stage="drone">
+          <div class="pipeline-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 6l6 6m6-6l-6 6m0 0l6 6m-6-6l-6 6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <div class="pipeline-name">Tello drone</div>
+          <div class="pipeline-meta">RC UDP · port 8889 · motor actuation</div>
+        </div>
+      </div>
+
+      <div class="pipeline-foot">
+        <span><strong>Toggle the mode</strong> — only the perception node and its
+        topic swap. The rest of the pipeline (<code>/cmd_vel</code> → Tello RC) is shared.</span>
+        <span class="pipeline-also"><code>/tello_action</code> — takeoff / land service runs alongside.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ CORE CODE · auto-playing Cursor-style demo ════════════ -->
+<section id="core">
+  <div class="container">
+    <span class="eyebrow">04 · Core code</span>
+    <h2>The full pipeline. Auto-playing.</h2>
+    <p class="lede">
+      From a raw camera frame on the Tello to a Twist command back over Wi-Fi —
+      five stages, one shared bus. The demo cycles automatically. Hover to pause.
+      Click any stage to jump.
+    </p>
+
+    <div class="cursor-desktop" id="cd-root">
+      <div class="cd-titlebar">
+        <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <span class="cd-title">106A · Drone Pipeline</span>
+        <div class="cd-controls">
+          <button class="cd-toggle" id="cd-toggle">
+            <span class="play-dot"></span>
+            <span class="cd-toggle-label">Auto · Playing</span>
+          </button>
+        </div>
+      </div>
+      <div class="cd-progress"><div class="cd-progress-bar" id="cd-bar"></div></div>
+
+      <div class="cd-grid">
+        <!-- LEFT · pipeline stages -->
+        <div class="cd-side" id="cd-side">
+          <div class="cd-side-title">Pipeline · 5 stages</div>
+
+          <button class="cd-stage active" data-stage="aruco-perc">
+            <span class="cd-stage-icon">①</span>
+            <div>
+              <div class="cd-stage-name">ArUco perception</div>
+              <div class="cd-stage-meta">solvePnP · 30 Hz</div>
+            </div>
+          </button>
+          <button class="cd-stage" data-stage="face-perc">
+            <span class="cd-stage-icon">②</span>
+            <div>
+              <div class="cd-stage-name">Face perception</div>
+              <div class="cd-stage-meta">YOLOv8 · ReID</div>
+            </div>
+          </button>
+          <button class="cd-stage" data-stage="aruco-ctrl">
+            <span class="cd-stage-icon">③</span>
+            <div>
+              <div class="cd-stage-name">ArUco controller</div>
+              <div class="cd-stage-meta">PD + LPF · 4-axis</div>
+            </div>
+          </button>
+          <button class="cd-stage" data-stage="face-ctrl">
+            <span class="cd-stage-icon">④</span>
+            <div>
+              <div class="cd-stage-name">Face controller</div>
+              <div class="cd-stage-meta">image-based servo</div>
+            </div>
+          </button>
+          <button class="cd-stage" data-stage="state">
+            <span class="cd-stage-icon">⑤</span>
+            <div>
+              <div class="cd-stage-name">Safety state machine</div>
+              <div class="cd-stage-meta">5 states · auto-land</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- MIDDLE · explanation -->
+        <div class="cd-mid">
+          <span class="cd-mid-eyebrow" id="cd-mid-eyebrow">Stage 01 / 05</span>
+          <h3 class="cd-mid-title" id="cd-mid-title">ArUco perception</h3>
+          <div class="cd-mid-prompt" id="cd-mid-prompt">
+            Detect the printed ArUco marker and turn it into a 6-DoF pose the
+            controller can servo on.
+          </div>
+          <div class="cd-mid-thought">
+            <span class="spinner"></span>
+            <span id="cd-mid-thought">Reading aruco_perception.py · 1.2 s</span>
+          </div>
+          <div class="cd-mid-body" id="cd-mid-body">
+            <p>Run <strong>cv2.aruco.detectMarkers</strong> on every camera frame.
+              When ID 0 is visible, run <strong>solvePnP</strong> with the printed
+              tag size and camera intrinsics — that gives a direct metric translation
+              and rotation.</p>
+            <p>The yaw is extracted from the rotation matrix and packed into the
+              unused <code>orientation.z</code> field so messaging stays cheap.</p>
+          </div>
+          <div class="cd-mid-files" id="cd-mid-files">
+            <div class="cd-mid-file">
+              <span class="icon-dot"></span>
+              <span>aruco_perception.py</span>
+              <span class="delta">+34</span>
+              <span class="delta-rm">−0</span>
+            </div>
+            <div class="cd-mid-file">
+              <span class="icon-dot" style="background: var(--forest-green-action);"></span>
+              <span>tello_direct_io.py</span>
+              <span class="delta">+12</span>
+              <span class="delta-rm">−4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT · code editor -->
+        <div class="cd-code">
+          <div class="cd-code-tabbar">
+            <div class="cd-code-tab" id="cd-code-tab">
+              <span>aruco_perception.py</span>
+              <span class="x">×</span>
+            </div>
+            <div class="cd-code-meta" id="cd-code-meta">my_drone_vision · perception</div>
+          </div>
+          <div class="cd-code-body" id="cd-code-body">
+
+            <div class="cd-code-pane active" data-pane="aruco-perc">
+<pre class="code"><span class="c-cm"># aruco_perception.py · corners + tag size → solvePnP → 6-DoF pose</span>
+<span class="c-kw">def</span> <span class="c-fn">on_frame</span>(<span class="c-pun">self</span>, frame):
+    corners, ids, _ = cv2.aruco.<span class="c-fn">detectMarkers</span>(frame, <span class="c-pun">self</span>.dict)
+    <span class="c-kw">if</span> ids <span class="c-kw">is</span> <span class="c-kw">None</span>:
+        <span class="c-kw">return</span>                            <span class="c-cm"># tag not visible this frame</span>
+
+    rvec, tvec = cv2.<span class="c-fn">solvePnP</span>(corners, <span class="c-pun">self</span>.tag_size,
+                                  <span class="c-pun">self</span>.K, <span class="c-pun">self</span>.dist)
+
+    pose = <span class="c-fn">Pose</span>()
+    pose.position.x, pose.position.y, pose.position.z = tvec
+    R, _ = cv2.<span class="c-fn">Rodrigues</span>(rvec)
+    pose.orientation.z = math.<span class="c-fn">atan2</span>(
+        -R[<span class="c-num">2</span>,<span class="c-num">0</span>],
+        math.<span class="c-fn">sqrt</span>(R[<span class="c-num">2</span>,<span class="c-num">1</span>]**<span class="c-num">2</span> + R[<span class="c-num">2</span>,<span class="c-num">2</span>]**<span class="c-num">2</span>),
+    )
+    <span class="c-pun">self</span>.pose_pub.<span class="c-fn">publish</span>(pose)            <span class="c-cm"># → /aruco/pose_3d</span></pre>
+            </div>
+
+            <div class="cd-code-pane" data-pane="face-perc">
+<pre class="code"><span class="c-cm"># face_perception.py · YOLOv8 box + ReID → center / area pose</span>
+<span class="c-kw">def</span> <span class="c-fn">on_frame</span>(<span class="c-pun">self</span>, frame):
+    boxes = <span class="c-pun">self</span>.<span class="c-fn">yolo</span>(frame).boxes
+    face  = <span class="c-pun">self</span>.<span class="c-fn">select_target</span>(boxes, <span class="c-pun">self</span>.reid)
+    <span class="c-kw">if</span> face <span class="c-kw">is</span> <span class="c-kw">None</span>:
+        <span class="c-kw">return</span> <span class="c-pun">self</span>.<span class="c-fn">haar_fallback</span>(frame)   <span class="c-cm"># transient YOLO loss</span>
+
+    H, W = frame.shape[:<span class="c-num">2</span>]
+    pose = <span class="c-fn">Pose</span>()
+    pose.position.x = (face.cx - W/<span class="c-num">2</span>) / (W/<span class="c-num">2</span>)   <span class="c-cm"># horizontal err</span>
+    pose.position.y = (face.cy - H/<span class="c-num">2</span>) / (H/<span class="c-num">2</span>)   <span class="c-cm"># vertical err</span>
+    pose.position.z = face.area                  <span class="c-cm"># depth proxy</span>
+
+    <span class="c-pun">self</span>.pose_pub.<span class="c-fn">publish</span>(pose)            <span class="c-cm"># → /face/pose</span></pre>
+            </div>
+
+            <div class="cd-code-pane" data-pane="aruco-ctrl">
+<pre class="code"><span class="c-cm"># aruco_controller.py · metric pose servo</span>
+<span class="c-cm"># e = [−x, z − d_target, −y, −yaw]</span>
+<span class="c-kw">def</span> <span class="c-fn">step</span>(<span class="c-pun">self</span>, pose):
+    x, y, z   = pose.position.x, pose.position.y, pose.position.z
+    yaw_tag   = pose.orientation.z
+
+    vx  = Kp_fwd  * (z - target_dist) + Kd_fwd  * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_fwd)
+    vy  = Kp_side * (-x)              + Kd_side * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_x)
+    vz  = Kp_z    * (-y)              + Kd_z    * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_y)
+    yaw = Kp_yaw  * (-yaw_tag)        + Kd_yaw  * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_yaw)
+
+    <span class="c-cm"># EMA smoothing α = 0.4 · RC clamps 12 / 18 / 12 / 25</span>
+    <span class="c-pun">self</span>.<span class="c-fn">publish_twist</span>(<span class="c-fn">clamp</span>(vx, vy, vz, yaw))</pre>
+            </div>
+
+            <div class="cd-code-pane" data-pane="face-ctrl">
+<pre class="code"><span class="c-cm"># face_controller.py · image-based servo</span>
+<span class="c-cm"># e = [x_center, y_center, A_target − A_face]</span>
+<span class="c-kw">def</span> <span class="c-fn">step</span>(<span class="c-pun">self</span>, pose):
+    err_x    = pose.position.x                  <span class="c-cm"># normalized [-1, 1]</span>
+    err_y    = pose.position.y
+    err_area = target_area - pose.position.z    <span class="c-cm"># depth proxy</span>
+
+    yaw = Kp_yaw * err_x    + Kd_yaw * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_x)
+    vz  = Kp_z   * (-err_y) + Kd_z   * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_y)
+    vx  = Kp_fwd * err_area + Kd_fwd * <span class="c-fn">LPF</span>(<span class="c-pun">self</span>.de_area)
+
+    <span class="c-cm"># Holds head near image center · ~1.5 m social distance</span>
+    <span class="c-pun">self</span>.<span class="c-fn">publish_twist</span>(<span class="c-fn">clamp</span>(vx, <span class="c-num">0.0</span>, vz, yaw))</pre>
+            </div>
+
+            <div class="cd-code-pane" data-pane="state">
+<pre class="code"><span class="c-cm"># state_machine.py · 5-state safety machine</span>
+<span class="c-kw">def</span> <span class="c-fn">step</span>(<span class="c-pun">self</span>, pose, dt):
+    <span class="c-kw">if</span>   <span class="c-pun">self</span>.state == IDLE:
+        <span class="c-kw">if</span> pose <span class="c-kw">and</span> <span class="c-pun">self</span>.<span class="c-fn">tag_seen_for</span>(<span class="c-num">2.0</span>):
+            <span class="c-pun">self</span>.state = ARM
+            <span class="c-pun">self</span>.<span class="c-fn">takeoff</span>()                  <span class="c-cm"># → /tello_action</span>
+
+    <span class="c-kw">elif</span> <span class="c-pun">self</span>.state == FOLLOW:
+        <span class="c-kw">if</span> pose <span class="c-kw">is</span> <span class="c-kw">None</span>:
+            <span class="c-pun">self</span>.lost_t += dt
+            <span class="c-kw">if</span> <span class="c-pun">self</span>.lost_t > <span class="c-num">0.5</span>:
+                <span class="c-pun">self</span>.state = SEARCH
+        <span class="c-kw">else</span>:
+            <span class="c-pun">self</span>.lost_t = <span class="c-num">0.0</span>
+            <span class="c-pun">self</span>.controller.<span class="c-fn">step</span>(pose)        <span class="c-cm"># PD + LPF</span>
+
+    <span class="c-kw">elif</span> <span class="c-pun">self</span>.state == SEARCH:
+        <span class="c-pun">self</span>.<span class="c-fn">yaw_scan</span>()
+        <span class="c-kw">if</span>   pose:               <span class="c-pun">self</span>.state = FOLLOW
+        <span class="c-kw">elif</span> <span class="c-pun">self</span>.lost_t > <span class="c-num">5.0</span>: <span class="c-pun">self</span>.state = LAND
+
+    <span class="c-kw">elif</span> <span class="c-pun">self</span>.state == LAND:
+        <span class="c-pun">self</span>.<span class="c-fn">soft_land</span>()                    <span class="c-cm"># → /tello_action</span></pre>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ OPERATION ════════════ -->
+<section id="operation">
+  <div class="container">
+    <span class="eyebrow">05 · Operation</span>
+    <h2>Five-state safety machine.</h2>
+    <p class="lede">
+      The leader takes off and is teleoperated. The follower confirms the tag, takes
+      off, locks at safe distance, copies the leader's velocity, recovers if the tag
+      is lost briefly, and lands cleanly on long loss.
+    </p>
+
+    <div class="state-row">
+      <div class="state idle">
+        <div class="num">01 · IDLE</div>
+        <div class="name"><span class="name-dot"></span>Idle</div>
+        <div class="desc">Disarmed. Waiting for tag &amp; takeoff.</div>
+      </div>
+      <div class="state arm">
+        <div class="num">02 · ARM</div>
+        <div class="name"><span class="name-dot"></span>Arm</div>
+        <div class="desc">Stable tag for ~2 s. Auto-takeoff.</div>
+      </div>
+      <div class="state fol">
+        <div class="num">03 · FOLLOW</div>
+        <div class="name"><span class="name-dot"></span>Follow</div>
+        <div class="desc">Track the tag at safe distance.</div>
+      </div>
+      <div class="state sea">
+        <div class="num">04 · SEARCH</div>
+        <div class="name"><span class="name-dot"></span>Search</div>
+        <div class="desc">Tag lost &lt; 2 s. Hover, yaw scan, retry.</div>
+      </div>
+      <div class="state lan">
+        <div class="num">05 · LAND</div>
+        <div class="name"><span class="name-dot"></span>Land</div>
+        <div class="desc">Tag lost &gt; 5 s. Soft-land. Disarm.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ ONLINE SIM · interactive in-browser ════════════ -->
+<section id="online">
+  <div class="container">
+    <span class="eyebrow">06 · Try it online</span>
+    <h2>Drag the AR tag. The drone follows.</h2>
+    <p class="lede">
+      The same PD + low-pass filter and 5-state safety machine as the real
+      project, running in your browser. Drag the marker around — or leave it
+      idle and it'll auto-orbit on a Lissajous figure-eight, just like
+      <code>marker_move.py</code> in the Gazebo sim.
+    </p>
+
+    <div class="online-sim" id="os-root">
+      <div class="os-titlebar">
+        <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <span class="os-title">drone_sim · localhost:webgl</span>
+        <div class="os-tools">
+          <button class="os-btn on"  id="os-orbit"><span class="check"></span>Auto-orbit</button>
+          <button class="os-btn on"  id="os-vec"><span class="check"></span>Show vectors</button>
+          <button class="os-btn on"  id="os-ring"><span class="check"></span>Safe ring</button>
+          <button class="os-btn"     id="os-hide"><span class="check"></span>Hide tag</button>
+          <button class="os-btn"     id="os-reset">↻ Reset</button>
+        </div>
+      </div>
+
+      <div class="os-stage" id="os-stage">
+        <canvas class="os-canvas" id="os-canvas"></canvas>
+        <div class="os-hint" id="os-hint">↓ drag the tag · or just watch</div>
+      </div>
+
+      <div class="os-hud">
+        <div class="state-cell">
+          <div class="lbl">State</div>
+          <div class="name" id="os-state-name"><span class="dot" id="os-state-dot"></span>FOLLOW</div>
+        </div>
+        <div class="cell"><div class="lbl">vx · forward</div><div class="val" id="os-vx">+0.00</div></div>
+        <div class="cell"><div class="lbl">vy · side</div><div class="val" id="os-vy">+0.00</div></div>
+        <div class="cell"><div class="lbl">yaw</div><div class="val" id="os-yaw">+0.00</div></div>
+        <div class="cell"><div class="lbl">Δ distance</div><div class="val" id="os-dist">0.00 m</div></div>
+        <div class="cell"><div class="lbl">tag-loss</div><div class="val muted" id="os-loss">0.0 s</div></div>
+        <div class="cell"><div class="lbl">topic</div><div class="val muted">/cmd_vel</div></div>
+      </div>
+    </div>
+
+    <!-- Real Gazebo recording — same logic, real renderer -->
+    <div class="demo-block" style="margin-top: 36px;">
+      <span class="demo-tag"><span class="live-dot"></span>Reference · same logic in Gazebo</span>
+      <h3>The same controller running inside ROS 2 + Gazebo.</h3>
+      <p>The browser sim above is the toy version. This is the actual project running
+         in Gazebo Classic 11 — same PD + LPF, same state machine, same
+         <code>/cmd_vel</code> topic — driving the simulated Tello against a real
+         <code>marker_move.py</code> Lissajous trajectory.</p>
+      <div class="video-card">
+        <div class="video-header">
+          <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <span class="filename">ros-sim.mp4</span>
+        </div>
+        <video src="videos/ros-sim.mp4"
+               controls muted loop playsinline preload="metadata">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div class="video-meta">
+        <span><strong>Source:</strong> Gazebo Classic 11 · simulated Tello camera</span>
+        <span><strong>Tracking topic:</strong> <code>/aruco/pose_3d</code> → <code>/drone1/cmd_vel</code></span>
+        <span><strong>Trajectory:</strong> spatial figure-eight (Lissajous 1:2)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ DEMOS ════════════ -->
+<section id="demos">
+  <div class="container">
+    <span class="eyebrow">07 · Live Demos</span>
+    <h2>Three demos. One code path.</h2>
+    <p class="lede">
+      Same perception → estimation → control loop, three different deployments.
+     
+    </p>
+
+    <!-- Demo 1 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 01 · Sim · Checkpoint 1</span>
+      <h3>Gazebo simulation.</h3>
+      <p>Before any real flight we validated the entire pipeline inside ROS 2 + Gazebo
+         Classic 11. Same nodes, same topics, simulated pixels.</p>
+      <div class="video-card">
+        <div class="video-header">
+          <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <span class="filename">ros-sim.mp4</span>
+        </div>
+        <video src="videos/ros-sim.mp4"
+               controls muted loop playsinline preload="metadata">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div class="video-meta">
+        <span><strong>Source:</strong> Gazebo Classic 11 · simulated Tello camera</span>
+        <span><strong>Tracking topic:</strong> <code>/aruco/pose_3d</code> → <code>/drone1/cmd_vel</code></span>
+        <span><strong>Trajectory:</strong> spatial figure-eight (Lissajous 1:2)</span>
+      </div>
+    </div>
+
+    <!-- Demo 2 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 02 · Real ArUco · Checkpoint 2</span>
+      <h3>Real Tello tracking an ArUco tag.</h3>
+      <p>Same code path in the real world. Wi-Fi latency, frame drops, and lighting
+         noise all show up. The drone confirms the tag, takes off, and holds the safe
+         distance through the leader's translations.</p>
+      <div class="video-row">
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_demo_a.mp4</span>
+          </div>
+          <video src="videos/cp_demo_a.mp4"
+                 poster="106a_final_project/demo/posters/cp2-real-aruco-1_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_demo_b.mp4</span>
+          </div>
+          <video src="videos/cp_demo_b.mp4"
+                 poster="106a_final_project/demo/posters/cp2-real-aruco-2_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo 3 -->
+    <div class="demo-block">
+      <span class="demo-tag"><span class="live-dot"></span>Demo 03 · Face · Stretch</span>
+      <h3>Human (face) tracking.</h3>
+      <p>We swap the ArUco detector for YOLOv8. The drone waits for a stable face,
+         takes off automatically, holds the head near image center at ~1.5 m social
+         distance, and lands on prolonged loss.
+         <strong>Same control law, same state machine — only perception changes.</strong></p>
+      <div class="video-row">
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_face_a.mp4</span>
+          </div>
+          <video src="videos/cp_face_a.mp4"
+                 poster="106a_final_project/demo/posters/cp_face_a_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
+        <div class="video-card">
+          <div class="video-header">
+            <div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <span class="filename">cp_face_b.mp4</span>
+          </div>
+          <video src="videos/cp_face_b.mp4"
+                 poster="106a_final_project/demo/posters/cp_face_b_3x.jpg"
+                 controls muted loop playsinline preload="metadata">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FAILURES ════════════ -->
+<section id="failures">
+  <div class="container">
+    <span class="eyebrow">08 · Failures &amp; Mitigations</span>
+    <h2>Six issues we hit — and the fixes that ship.</h2>
+
+    <div class="grid-3" style="margin-top: 24px;">
+      <div class="issue-card">
+        <span class="num">▲ 01</span>
+        <span class="head">Wi-Fi drops &amp; network in VMs</span>
+        <span class="fix">Controlled timeout for Wi-Fi instability; switched from
+          Docker (system-agnostic) to <strong>WSL on Windows</strong> so the Tello UDP
+          socket maps directly through the host.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 02</span>
+        <span class="head">ArUco pose flicker</span>
+        <span class="fix">EMA smoothing filter on the translation component of the pose.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 03</span>
+        <span class="head">Sudden tracking errors</span>
+        <span class="fix">PD control with a low-pass filter cleans up noisy pose
+          estimates before they reach the actuator.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 04</span>
+        <span class="head">Half-second occlusions</span>
+        <span class="fix">Search state machine: hover, yaw-scan, retry, fall through
+          to safe-landing if the scan exhausts.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 05</span>
+        <span class="head">Multi-node Tello IO latency</span>
+        <span class="fix">Single owner pattern — one
+          <code>tello_direct_io_node</code> wraps the DJI Tello packages and handles
+          everything end-to-end.</span>
+      </div>
+      <div class="issue-card">
+        <span class="num">▲ 06</span>
+        <span class="head">Inconsistent video stream</span>
+        <span class="fix">Smoothed video quality through Tekko frame handling, and
+          moved detection in-process to remove the ROS-image round trip.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FUTURE ════════════ -->
+<section id="future">
+  <div class="container">
+    <span class="eyebrow">09 · Future Plans</span>
+    <h2>Four directions we want to take this.</h2>
+
+    <div class="grid-4" style="margin-top: 24px;">
+      <div class="future-card">
+        <span class="num">→ 01</span>
+        <span class="head">Voice-selectable tracking</span>
+        <span class="desc">A multimodal operator command to switch between tracking
+          modes — ArUco, face, or full-person. Voice frees the operator's hands during a demo.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 02</span>
+        <span class="head">Multi-follower formation</span>
+        <span class="desc">Use shared TF frames so multiple drones maintain formation
+          offsets from the leader instead of all targeting the same point.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 03</span>
+        <span class="head">Mental-mapping replay</span>
+        <span class="desc">The follower remembers another drone's path and replays
+          it later with obstacle awareness.</span>
+      </div>
+      <div class="future-card">
+        <span class="num">→ 04</span>
+        <span class="head">Onboard inference</span>
+        <span class="desc">Move perception to a Jetson companion to cut Wi-Fi latency
+          and drop the base-station dependency.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ HARDWARE BRIDGES ════════════ -->
+<section id="hardware">
+  <div class="container">
+    <span class="eyebrow">10 · Real-hardware bridges</span>
+    <h2>Two utility scripts that target the physical Tello.</h2>
+    <div class="grid-2" style="margin-top: 24px;">
+      <div class="card">
+        <div class="icon">≋</div>
+        <h3><code>tello-station.sh</code></h3>
+        <p>One-shot helper that switches the Tello from its default AP mode into
+          <strong>station mode</strong>, joining a target Wi-Fi (e.g. a phone hotspot).
+          Verifies the Mac is on the <code>TELLO-XXXXXX</code> hotspot, pings the drone,
+          sends <code>command</code> / <code>battery?</code> /
+          <code>ap &lt;ssid&gt; &lt;pass&gt;</code> over UDP 8889.
+          Refuses to run below 25 % battery.</p>
+      </div>
+      <div class="card">
+        <div class="icon">▦</div>
+        <h3><code>tt_show_aruco.py</code></h3>
+        <p>Renders a real ArUco marker directly onto the RoboMaster TT's
+          <strong>top 8×8 LED matrix</strong>. A TT can literally carry its own ArUco
+          for another drone to track — physical equivalent of the moving marker in the
+          simulation demo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ QUICKSTART ════════════ -->
+<section id="run">
+  <div class="container">
+    <span class="eyebrow">11 · Quickstart</span>
+    <h2>How to run it.</h2>
+    <p class="lede">
+      Requires Ubuntu 22.04 (or WSL 2 on Windows) + ROS 2 Humble + Gazebo Classic 11.
+      Every fresh terminal must source the workspace.
+    </p>
+
+    <div class="code-panel code-window" data-code-group="run">
+      <div class="code-window-header">
+        <div class="code-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div class="code-tabs">
+          <button class="code-tab active" data-tab="run-build">
+            <span class="dot"></span>① build.sh
+          </button>
+          <button class="code-tab" data-tab="run-sim">
+            <span class="dot"></span>② sim.sh
+          </button>
+          <button class="code-tab" data-tab="run-real-aruco">
+            <span class="dot"></span>③ real_aruco.sh
+          </button>
+          <button class="code-tab" data-tab="run-face">
+            <span class="dot"></span>④ face.sh
+          </button>
+        </div>
+        <div class="code-meta">$ bash</div>
+      </div>
+      <div class="code-body">
+        <button class="code-copy" data-copy="run-build">Copy</button>
+        <div class="code-pane active" id="run-build">
+<pre class="code"><span class="c-cm"># ① Build the workspace</span>
+<span class="c-fn">cd</span> ~/ros2_ws/106a_final_project/drone_simulation
+<span class="c-fn">source</span> /opt/ros/humble/setup.bash
+colcon build</pre>
+        </div>
+        <div class="code-pane" id="run-sim">
+<pre class="code"><span class="c-cm"># ② Sim path · launch Gazebo + simulated Tello</span>
+<span class="c-fn">source</span> install/setup.bash
+ros2 launch tello_gazebo simple_launch.py
+
+<span class="c-cm"># second terminal · perception + control</span>
+ros2 launch my_drone_vision vision_control.launch.py
+
+<span class="c-cm"># third terminal · marker trajectory</span>
+python3 marker_move.py</pre>
+        </div>
+        <div class="code-pane" id="run-real-aruco">
+<pre class="code"><span class="c-cm"># ③ Real path · ArUco follow on a Tello</span>
+<span class="c-cm"># put Tello onto the local Wi-Fi (one-shot)</span>
+./tello-station.sh
+
+<span class="c-cm"># launch the I/O + controller node pair</span>
+ros2 launch my_drone_vision tello_aruco.launch.py</pre>
+        </div>
+        <div class="code-pane" id="run-face">
+<pre class="code"><span class="c-cm"># ④ Real path · face follow</span>
+ros2 launch my_drone_vision tello_face.launch.py
+<span class="c-cm"># YOLOv8 weights are downloaded the first time</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 36px;">Common gotchas</h3>
+    <div class="grid-3" style="margin-top: 12px;">
+      <div class="card">
+        <div class="icon">!</div>
+        <h3>Address already in use</h3>
+        <p>A leftover Gazebo process is still bound:<br/>
+          <code>pkill -f "gazebo|gzserver|gzclient"</code></p>
+      </div>
+      <div class="card">
+        <div class="icon">↕</div>
+        <h3>Marker won't move on z</h3>
+        <p>Gazebo is using an old model with <code>planar_move</code>. Restart Gazebo
+          and confirm the model comes from this repo.</p>
+      </div>
+      <div class="card">
+        <div class="icon">×</div>
+        <h3>No marker / face detected</h3>
+        <p>Check the camera topic has data, and that the perception node was started
+          after sourcing <code>install/setup.bash</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div class="container">
+    <div style="font-weight: 500; color: var(--inkwell);">EE/CS 106A · Spring 2026 · Final Project</div>
+    <div style="margin-top: 6px;">Autonomous Safe Drone Convoy Following</div>
+    <div class="small" style="margin-top: 14px;">
+      Static single-page site · open <code style="font-family: var(--font-mono); background: var(--pebble-gray); padding: 1px 6px; border-radius: 3px;">index.html</code> directly in any browser.
+    </div>
+  </div>
+</footer>
+
+<script src="/app.js" defer></script>
+
+</body>
+</html>

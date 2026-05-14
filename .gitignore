@@ -13,6 +13,10 @@ public/videos/
 # Codex/GitHub PR review packets
 .codex/pr-feedback/
 
+# Node / build output
+node_modules/
+dist/
+
 # Editor noise
 .vscode/
 .idea/
@@ -26,3 +30,5 @@ public/videos/
 # Logs
 *.log
 ogre.log
+.vercel
+.env*.local

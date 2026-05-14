@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Autonomous Safe Drone Convoy Following · CS 106A</title>
+<title>Autonomous Safe Drone Following · CS 106A</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1409,7 +1409,7 @@
   <div class="nav-inner">
     <div class="brand">
       <span class="brand-mark">⌖</span>
-      106A · Drone Convoy
+      106A · Drone Following
     </div>
     <ul>
       <li><a href="#overview">Overview</a></li>
@@ -1434,7 +1434,7 @@
       <!-- left -->
       <div>
         <span class="hero-pill"><span class="live-dot"></span> EECS / BioE / ME C106A · Spring 2026 · Final Project</span>
-        <h1 class="title">Autonomous Safe<br/>Drone Convoy<br/>Following.</h1>
+        <h1 class="title">Autonomous Safe<br/>Drone Following.</h1>
         <p class="hero-sub">
           A ROS2-based visual servoing system that lets a real DJI/Ryze Tello drone
           follow a target using ArUco tracking, YOLOv8 face tracking, and
@@ -1490,10 +1490,17 @@
       <div class="stat">
         <div class="num">Stack</div>
         <div class="lbl">ROS2 · OpenCV · YOLOv8 · djitellopy · Python</div>
+
+        =======
+        <div class="lbl">ArUco + YOLOv8 Face</div>
       </div>
-    </div>
-  </div>
-</header>
+      <div class="stat">
+        <div class="num">Safe</div>
+        <div class="lbl">Lock → follow → search → land</div>
+      </div>
+      <div class="stat">
+        <div class="num">ROS 2</div>
+        <div class="lbl">OpenCV · djitellopy</div>
 
 <hr class="section-divider" />
 
@@ -2442,7 +2449,7 @@ ros2 launch my_drone_vision tello_face.launch.py
 <footer>
   <div class="container">
     <div style="font-weight: 500; color: var(--inkwell);">EE/CS 106A · Spring 2026 · Final Project</div>
-    <div style="margin-top: 6px;">Autonomous Safe Drone Convoy Following</div>
+    <div style="margin-top: 6px;">Autonomous Safe Drone Following</div>
     <div class="small" style="margin-top: 14px;">
       Static single-page site · open <code style="font-family: var(--font-mono); background: var(--pebble-gray); padding: 1px 6px; border-radius: 3px;">index.html</code> directly in any browser.
     </div>
