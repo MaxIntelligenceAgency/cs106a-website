@@ -47,7 +47,7 @@ The page is organized as a static technical case study: story first, proof secon
 9. Implementation Details · hardware, software stack, nodes, topics, and expandable code-stage appendix
 10. Future Work / Conclusion · limitations and next steps
 11. Team Contributions · major contributions by member
-12. Resources / Additional Materials · GitHub, slides placeholder, videos, package appendix, interactive sim, hardware bridges, and quickstart
+12. Resources / Additional Materials · project showcase slides placeholder, demo video index, GitHub, launch files, package appendix, interactive sim, hardware bridges, and quickstart
 
 ## Vercel static site settings
 
