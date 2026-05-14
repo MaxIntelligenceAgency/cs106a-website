@@ -167,6 +167,17 @@ Example: to make headings use Georgia while keeping body text system sans-serif:
 
 If you later want downloaded web fonts, use `next/font` in `app/layout.tsx` and connect the generated class or CSS variables to the same `--font-*` variables. Keeping the rest of the CSS pointed at variables means the design can switch fonts without rewriting every selector.
 
+
+## Troubleshooting PR creation and binary files
+
+MP4 videos are binary files. Git can track them, but many PR-review and patch-application tools cannot display or transmit binary file additions the same way they handle text diffs. The original Next.js scaffold duplicated the already-tracked root `videos/*.mp4` files into `public/videos/*.mp4`, so the branch tried to add a second copy of each video as binary content. That is the likely reason the GitHub/Codex PR update flow showed a **Binary files are not supported** / **Failed to create pull request** error.
+
+This branch now avoids that failure mode by keeping only the original `videos/*.mp4` files in Git. During local development and Vercel builds, `npm run sync:videos` generates `public/videos/` from those tracked originals. Because `public/videos/` is ignored, future PR diffs stay text-only for the Next.js scaffold while the app still gets public video URLs at runtime/build time.
+
+`npm run dev` runs the Next.js development server. Because `package.json` defines `predev`, npm automatically runs `npm run sync:videos` first, then starts `next dev` for local preview with hot reload.
+
+`npm run build` creates the production/export build. Because `package.json` defines `prebuild`, npm automatically runs `npm run sync:videos` first, then runs `next build`. With `next.config.ts` using `output: "export"`, the build writes a static export suitable for Vercel/static hosting.
+
 ## Hardware utility scripts
 
 `tello-station.sh` is a Mac-oriented helper for real hardware setup. It expects the laptop to be connected to the Tello access point, verifies the current Wi-Fi network, pings `192.168.10.1`, enters Tello SDK mode, checks battery, and sends the SDK `ap <ssid> <password>` command so the drone reboots into station mode on a shared Wi-Fi network.
