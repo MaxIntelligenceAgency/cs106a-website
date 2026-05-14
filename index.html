@@ -1554,13 +1554,30 @@
 <section id="motivation">
   <div class="container">
     <span class="eyebrow">03 · Motivation</span>
-    <h2>Why this is an interesting robotics systems problem.</h2>
-    <div class="grid-3" style="margin-top: 24px;">
-      <div class="card"><div class="icon">?</div><h3>Noisy monocular video</h3><p>The Tello has one onboard camera, so the system must estimate target error from imperfect image measurements rather than dedicated range sensors.</p></div>
-      <div class="card"><div class="icon">≈</div><h3>Wi-Fi control loop</h3><p>Frames and commands move over Wi-Fi, so the controller must handle stale data, delay, and dropped detections without chasing bad measurements.</p></div>
-      <div class="card"><div class="icon">↓</div><h3>Safe autonomy</h3><p>The drone waits for stable visual lock before takeoff, clips commands during follow, and lands when the target is lost for too long.</p></div>
+    <h2>Making a cheap drone follow safely is a real systems problem.</h2>
+    <p class="lede">
+      A one-off drone follow demo is easy to describe. Making it work safely on a
+      low-cost Tello is harder: the drone has only monocular video, communicates
+      over Wi-Fi, and cannot keep moving blindly when perception becomes unreliable.
+    </p>
+
+    <div class="system-caption">
+      <p><strong>Problem statement:</strong> Can a consumer drone behave like a safe autonomous follower using only software perception, ROS2 messages, clipped velocity commands, and explicit failure handling?</p>
     </div>
-    <p class="lede" style="margin-top: 28px;">Real-world versions of this pattern matter for indoor convoy robotics, inspection, filming, warehouse assistance, and search-support drones.</p>
+
+    <div class="grid-4" style="margin-top: 24px;">
+      <div class="card"><div class="icon">◐</div><h3>Limited sensing</h3><p>The Tello does not provide reliable onboard depth. ArUco pose and face-area signals act as practical distance proxies.</p></div>
+      <div class="card"><div class="icon">≈</div><h3>Networked control</h3><p>Video frames and RC commands move over Wi-Fi, so stale-frame guards and command clipping protect the control loop.</p></div>
+      <div class="card"><div class="icon">⇄</div><h3>Swappable perception</h3><p>ArUco and YOLOv8 face tracking are different front ends, but both publish target-error signals into the same controller contract.</p></div>
+      <div class="card"><div class="icon">↓</div><h3>Safety is required</h3><p>The follower waits for stable visual lock, delays follow after takeoff, searches or hovers on short loss, and lands after prolonged loss.</p></div>
+    </div>
+
+    <p class="lede" style="margin-top: 28px;">
+      This is why the project is more than a drone trick: it turns fragile consumer
+      hardware into a small safety-aware autonomy stack. The same pattern matters
+      for indoor convoy robotics, inspection, filming, warehouse assistance, and
+      search-support drones.
+    </p>
   </div>
 </section>
 
@@ -2210,18 +2227,18 @@
 
     <div id="showcase-materials" style="margin-top: 28px;">
       <h3>Project showcase materials</h3>
-      <p>Use this block for public artifacts from the final showcase: the slide deck recruiters can skim and the raw demo clips graders can verify.</p>
+      <p>These are supporting artifacts, not the main story. The page above explains the project; this block gives graders and recruiters the original showcase deck and raw demo clips for verification.</p>
       <div class="grid-2" style="margin-top: 16px; margin-bottom: 28px;">
         <div class="card">
           <div class="icon">Deck</div>
           <h3>Project Showcase Slides</h3>
-          <p>Placeholder for the Google Slides deck used during the project showcase. Replace this with the public deck URL when it is ready.</p>
-          <p><span class="btn ghost" aria-disabled="true">Add Google Slides URL</span></p>
+          <p>The Google Slides deck used for the final showcase should summarize the live demo flow, system architecture, key results, limitations, and future work.</p>
+          <p><span class="btn ghost" aria-disabled="true">Add public Google Slides URL</span></p>
         </div>
         <div class="card">
           <div class="icon">▶</div>
           <h3>Demo Video Index</h3>
-          <p><a href="videos/ros-sim.mp4">Gazebo Simulation</a> · <a href="videos/cp_demo_a.mp4">ArUco Following A</a> · <a href="videos/cp_demo_b.mp4">ArUco Following B</a> · <a href="videos/cp_face_a.mp4">Face Tracking A</a> · <a href="videos/cp_face_b.mp4">Face Tracking B</a></p>
+          <p>Raw clips that back up the Results section: <a href="videos/ros-sim.mp4">Gazebo Simulation</a> · <a href="videos/cp_demo_a.mp4">ArUco Following A</a> · <a href="videos/cp_demo_b.mp4">ArUco Following B</a> · <a href="videos/cp_face_a.mp4">Face Tracking A</a> · <a href="videos/cp_face_b.mp4">Face Tracking B</a>.</p>
         </div>
       </div>
     </div>
