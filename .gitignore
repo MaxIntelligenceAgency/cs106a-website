@@ -10,6 +10,10 @@ public/videos/
 *.tsbuildinfo
 .env*.local
 
+# Node / build output
+node_modules/
+dist/
+
 # Editor noise
 .vscode/
 .idea/
@@ -23,3 +27,5 @@ public/videos/
 # Logs
 *.log
 ogre.log
+.vercel
+.env*.local
