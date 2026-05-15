@@ -1,0 +1,9 @@
+{
+  "name": "autonomous-safe-drone-convoy-following",
+  "builtAt": "2026-05-12T18:42:33.648Z",
+  "node": "v24.14.1",
+  "assets": {
+    "demos": 3,
+    "videos": 5
+  }
+}
