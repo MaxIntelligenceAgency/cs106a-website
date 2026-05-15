@@ -376,6 +376,12 @@
     margin: 4px 0 8px;
   }
   .team-card .bio { font-size: 13px; color: var(--muted-stone); line-height: 1.5; }
+  .team-card .contrib {
+    margin: 10px 0 0; padding-top: 8px;
+    border-top: 1px solid rgba(38,37,16,0.08);
+    font-size: 13px; color: var(--muted-stone);
+  }
+  .team-card .contrib strong { color: var(--deep-shadow); }
 
   /* ───────────── Dual architecture ───────────── */
   .dual-arch {
@@ -728,49 +734,28 @@
   .state.lan  .name-dot { background: var(--onyx-outline); }
 
   /* ───────────── Issue / Future cards ───────────── */
-  .issue-card {
+  .issue-card, .future-card {
     background: var(--canvas-parchment);
     border: 1px solid rgba(38, 37, 16, 0.10);
-    border-left: 3px solid var(--goldenrod-accent);
+    border-left: 3px solid var(--accent, var(--goldenrod-accent));
     border-radius: var(--r-sm);
     padding: 16px 18px;
     transition: transform .15s, box-shadow .15s;
   }
-  .issue-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-subtle); }
-  .issue-card .num {
+  .issue-card { --accent: var(--goldenrod-accent); }
+  .future-card { --accent: var(--onyx-outline); }
+  .issue-card:hover, .future-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-subtle); }
+  .issue-card .num, .future-card .num {
     font-family: var(--font-mono); font-size: 10px;
-    color: var(--goldenrod-accent); font-weight: 600;
-    letter-spacing: 0.08em;
+    color: var(--accent); font-weight: 600; letter-spacing: 0.08em;
   }
-  .issue-card .head {
-    display: block;
-    font-weight: 600; color: var(--deep-shadow);
-    font-size: 15px; margin: 4px 0 6px;
-    letter-spacing: -0.01em;
+  .issue-card .head, .future-card .head {
+    display: block; font-weight: 600; color: var(--deep-shadow);
+    font-size: 15px; margin: 4px 0 6px; letter-spacing: -0.01em;
   }
-  .issue-card .fix { font-size: 13px; color: var(--muted-stone); line-height: 1.55; }
-
-  .future-card {
-    background: var(--canvas-parchment);
-    border: 1px solid rgba(38, 37, 16, 0.10);
-    border-left: 3px solid var(--onyx-outline);
-    border-radius: var(--r-sm);
-    padding: 16px 18px;
-    transition: transform .15s, box-shadow .15s;
+  .issue-card .fix, .future-card .desc {
+    font-size: 13px; color: var(--muted-stone); line-height: 1.55;
   }
-  .future-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-subtle); }
-  .future-card .num {
-    font-family: var(--font-mono); font-size: 10px;
-    color: var(--onyx-outline); font-weight: 600;
-    letter-spacing: 0.08em;
-  }
-  .future-card .head {
-    display: block;
-    font-weight: 600; color: var(--deep-shadow);
-    font-size: 15px; margin: 4px 0 6px;
-    letter-spacing: -0.01em;
-  }
-  .future-card .desc { font-size: 13px; color: var(--muted-stone); line-height: 1.55; }
 
   /* ───────────── Demo videos ───────────── */
   .demo-block { margin-top: 36px; }
@@ -2312,40 +2297,28 @@
         <span class="role">CS · Cogsci</span>
         <div class="name">Max Wang</div>
         <div class="bio">Studies ML and RL methods. Interest in autonomous driving and humanoids.</div>
-        <div style="margin-top:10px; font-size:13px; color:var(--muted-stone); border-top:1px solid rgba(38,37,16,0.08); padding-top:8px;">
-          <strong style="color:var(--deep-shadow);">Contributions:</strong>
-          Final presentation slides, website design refinement, early-stage project proposal.
-        </div>
+        <p class="contrib"><strong>Contributions:</strong> Final presentation slides, website design refinement, early-stage project proposal.</p>
       </div>
       <div class="team-card">
         <div class="avatar">TZ</div>
         <span class="role">EECS</span>
         <div class="name">Tianren (Tyler) Zeng</div>
         <div class="bio">Computer vision, GPS-free obstacle avoidance, RL for humanoid control.</div>
-        <div style="margin-top:10px; font-size:13px; color:var(--muted-stone); border-top:1px solid rgba(38,37,16,0.08); padding-top:8px;">
-          <strong style="color:var(--deep-shadow);">Contributions:</strong>
-          ArUco tag tracking pipeline, PD controller, YOLOv8 face detection, initial ROS 2 Gazebo simulation, final presentation.
-        </div>
+        <p class="contrib"><strong>Contributions:</strong> ArUco tag tracking pipeline, PD controller, YOLOv8 face detection, initial ROS 2 Gazebo simulation, final presentation.</p>
       </div>
       <div class="team-card">
         <div class="avatar">GJ</div>
         <span class="role">ME</span>
         <div class="name">Gia Jeong</div>
         <div class="bio">Tactile sensing and suction-cup manipulation. Previously: human-following quadruped, autonomous car.</div>
-        <div style="margin-top:10px; font-size:13px; color:var(--muted-stone); border-top:1px solid rgba(38,37,16,0.08); padding-top:8px;">
-          <strong style="color:var(--deep-shadow);">Contributions:</strong>
-          Co-developed ROS 2 Gazebo simulation, Docker containerization of the ROS environment, final presentation.
-        </div>
+        <p class="contrib"><strong>Contributions:</strong> Co-developed ROS 2 Gazebo simulation, Docker containerization of the ROS environment, final presentation.</p>
       </div>
       <div class="team-card">
         <div class="avatar">YP</div>
         <span class="role">EECS</span>
         <div class="name">Yuanbo (Aaron) Pang</div>
         <div class="bio">VLA models on whole-body robots. UAV systems work.</div>
-        <div style="margin-top:10px; font-size:13px; color:var(--muted-stone); border-top:1px solid rgba(38,37,16,0.08); padding-top:8px;">
-          <strong style="color:var(--deep-shadow);">Contributions:</strong>
-          Tello drone takeoff/flight integration, fixed legacy framework issues causing drone frequency drops, co-developed ArUco tag following, project website, final presentation.
-        </div>
+        <p class="contrib"><strong>Contributions:</strong> Tello drone takeoff/flight integration, fixed legacy framework issues causing drone frequency drops, co-developed ArUco tag following, project website, final presentation.</p>
       </div>
     </div>
   </div>
