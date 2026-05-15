@@ -1,6 +1,6 @@
 # Autonomous Safe Drone Following · CS 106A
 
-Static project site for our EE/CS 106A Spring 2026 final project. The current backbone remains `index.html`, and the repo now also includes a Next.js/TypeScript implementation map for iterative website engineering.
+Project site for our EE/CS 106A Spring 2026 final project. The repo keeps the original static `index.html` as a vanilla reference, but the deployable front-end is now the Next.js/TypeScript version in `app/`, `components/`, and `data/`.
 
 **Live:** https://cs106a-drone-convoy.vercel.app
 
@@ -27,8 +27,8 @@ flowchart TD
   Results --> Media[public/videos/\ngenerated from videos/ during dev/build]
 ```
 
-- `index.html` — the current static site backbone (all CSS + JS inline)
-- `app/`, `components/`, `data/` — Next.js / TypeScript component and content structure that maps the same case-study sections into reusable TSX modules
+- `index.html` — the original vanilla/static reference page used for visual and content comparison
+- `app/`, `components/`, `data/` — the deployable Next.js / TypeScript front-end, split into reusable content and UI modules
 - `app/layout.tsx` — the root Next.js layout; it wraps every route, sets the `<html>` / `<body>` shell, and exports `metadata` for the browser tab, SEO summaries, and social/link previews
 - `app/page.tsx` — the homepage composition file; keep it small and use it to order reusable sections, including `LinearSystemDiagram`
 - `components/LinearSystemDiagram.tsx` — the interactive front-end architecture / system-flow component; keep the diagram UI here instead of mixing it into `page.tsx`
@@ -108,9 +108,9 @@ To reorder the homepage, move the component tags in this file. To edit the conte
 
 If you want to change the diagram text, edit `data/architecture.ts`. If you want to change diagram layout, spacing, or hover behavior, edit `components/LinearSystemDiagram.tsx` and the `.linearArch`, `.linearFlow`, `.linearNode`, and `.linearDetail` styles in `app/globals.css`.
 
-## Rendering model: static vs dynamic runtime rendering
+## Rendering model: static export, not dynamic runtime rendering
 
-This repo's Next.js config is currently set up for static export, so the preview app is intended to be generated as static HTML/CSS/JS at build time. That matches the project-site use case: it is fast, cacheable, and easy to deploy because the content does not need per-request server computation.
+This repo's Next.js config is set up for static export, so the production site is generated as static HTML/CSS/JS at build time. That matches the project-site use case: it is fast, cacheable, and easy to deploy because the content does not need per-request server computation.
 
 **Dynamic runtime rendering** means the server generates some or all of a page when a visitor requests it instead of prebuilding every page ahead of time. It is useful for dashboards, authenticated pages, personalized content, frequently changing data, or pages that need request-time cookies/headers/database queries.
 
@@ -249,13 +249,7 @@ The script writes `.codex/pr-feedback/pr-4/next_steps.md`, `thread.md`, `review-
 
 ## Run locally
 
-Current static backbone:
-
-```bash
-npm run dev
-```
-
-Next.js / TypeScript implementation map:
+Install dependencies, generate the public video copy, and start the Next.js preview:
 
 ```bash
 npm install
@@ -264,18 +258,19 @@ npm run dev
 
 `npm run dev` first runs `npm run sync:videos`, which copies the existing root-level `videos/*.mp4` files into `public/videos/` for Next.js. The generated `public/videos/` directory is intentionally ignored by Git to avoid duplicate binary files in pull requests.
 
-## Deploy
-
 ## Build, test, and run
 
 ```bash
-npm run build
+npm run typecheck
 npm test
+npm run build
 npm start
 ```
 
-`npm start` serves `dist/public` in production after a build, while development
-serves `public/` directly.
+- `npm run typecheck` validates the Next.js/TypeScript files.
+- `npm test` runs the lightweight Node server/API regression tests.
+- `npm run build` runs `sync:videos` and then `next build`; with `output: "export"`, Next.js emits the static site into `out/`.
+- `npm start` is only for serving the Next.js production build locally. Vercel should use the build command, not a custom start command.
 
 ## API
 
@@ -300,23 +295,19 @@ The page is organized as a static technical case study: story first, proof secon
 11. Team Contributions · major contributions by member
 12. Resources / Additional Materials · project showcase slides placeholder, demo video index, GitHub, launch files, package appendix, interactive sim, hardware bridges, and quickstart
 
-## Vercel deployment settings
+## Vercel deployment settings and build-debug notes
 
-Current static-backbone deployment:
+Recommended Vercel project settings for this branch:
 
-- Framework Preset: Other
+- Framework Preset: `Next.js`
 - Root Directory: `./`
-- Build Command: leave empty
-- Output Directory: `./`
-- Install Command: leave empty
-
-Next.js / TypeScript preview path:
-
-- Framework Preset: Next.js
-- Root Directory: `./`
-- Build Command: `npm run build` (this automatically runs `npm run sync:videos` first)
-- Output Directory: handled by Next.js (`out/` because `next.config.ts` uses `output: "export"`)
 - Install Command: `npm install`
+- Build Command: `npm run build` (this automatically runs `npm run sync:videos` first)
+- Output Directory: leave blank / let Vercel infer it from the Next.js build
+
+The previous failure is most likely configuration drift from moving between a vanilla static site and a Next.js static export. The repo already has `next.config.ts` with `output: "export"`, so `next build` writes static assets to `out/`. However, manually forcing `outputDirectory` in `vercel.json` or in the Vercel dashboard can conflict with Vercel's Next.js framework detection and make the platform look for the wrong artifact location. This branch removes the explicit `outputDirectory` override from `vercel.json`; if Vercel still fails, clear the dashboard Output Directory override as well and redeploy from the latest commit.
+
+If Vercel reports missing videos, verify that the build log includes `npm run sync:videos` before `next build`. That script copies the tracked `videos/*.mp4` clips into `public/videos/` during the build without committing duplicate binary files.
 
 Use Vercel Preview Deployments from feature branches before merging into the production branch.
 
